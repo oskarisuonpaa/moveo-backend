@@ -1,8 +1,10 @@
-import app from "./app";
-import config from "./config/config";
+import http from 'http';
+import app from './app';
+import { logger } from './utils/logger';
 
-const PORT = config.port;
+const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+const server = http.createServer(app);
+server.listen(PORT, () => {
+  logger.log(`Server is running on port ${PORT}`);
 });
