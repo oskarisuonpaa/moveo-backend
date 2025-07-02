@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { AppError, errorHandler } from './middleware/error.middleware';
+import errorHandler, { AppError } from './middleware/error.middleware';
 import exampleRouter from './routes/example.route';
 import { logger } from './utils/logger';
 
@@ -15,6 +15,14 @@ app.use(express.json());
 app.use('/api/example', exampleRouter);
 
 app.use((_request: Request, _response: Response, next: NextFunction) => {
+  /**
+   * Creates an instance of `AppError` with the message 'Not Found'.
+   * This error is typically used to indicate that a requested resource
+   * could not be found.
+   *
+   * @constant
+   * @type {AppError}
+   */
   const error: AppError = new Error('Not Found') as AppError;
   error.status = 404;
   next(error);
