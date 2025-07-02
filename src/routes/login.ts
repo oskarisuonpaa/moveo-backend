@@ -3,6 +3,14 @@ import jwt from 'jsonwebtoken'
 import { db } from '../db/mysql'
 import wpHash from 'wordpress-hash-node'
 
+// Defining the shape of a WordPress user object returned from the DB
+interface WPUser {
+    ID: number
+    user_login: string
+    user_email: string
+    user_pass: string
+}
+
 // WordPress password hasher
 const hasher = new wpHash()
 
@@ -21,7 +29,8 @@ router.post('/', async (req, res) => {
     )
 
     // Get the first matching user
-    const user: any = (rows as any[])[0]
+    const users = rows as WPUser[]
+    const user = users[0]
 
     // If no user found or password doesnt match (WP hash check)
     if (!user || !hasher.CheckPassword(password, user.user_pass)) {
