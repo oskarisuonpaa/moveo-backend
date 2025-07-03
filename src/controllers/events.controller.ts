@@ -12,7 +12,7 @@ export const getCalendarEvents = async (
   next: NextFunction,
 ) => {
   try {
-    const { calendarId } = request.query;
+    const { calendarId } = request.params;
 
     if (!calendarId || typeof calendarId !== 'string') {
       const error = new Error('Invalid calendar ID') as AppError;
@@ -33,7 +33,7 @@ export const postCalendarEvent = async (
   next: NextFunction,
 ) => {
   try {
-    const { calendarId } = request.query;
+    const { calendarId } = request.params;
     const event = request.body as calendar_v3.Schema$Event;
 
     if (!calendarId || typeof calendarId !== 'string') {
@@ -48,8 +48,8 @@ export const postCalendarEvent = async (
       return next(error);
     }
 
-    await createCalendarEvent(calendarId, event);
-    response.status(201).send();
+    const newEvent = await createCalendarEvent(calendarId, event);
+    response.status(201).json(newEvent);
   } catch (error) {
     next(error);
   }

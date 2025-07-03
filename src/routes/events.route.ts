@@ -6,7 +6,7 @@ import {
 
 const router = Router();
 
-router.get('/', getCalendarEvents);
-router.post('/', postCalendarEvent);
+router.get('/:calendarId', getCalendarEvents);
+router.post('/:calendarId', postCalendarEvent);
 
 export default router;
