@@ -29,7 +29,7 @@ module.exports = {
     es6: true,
   },
 
-  ignorePatterns: ['node_modules/', 'dist/', 'build/'],
+  ignorePatterns: ['node_modules/', 'dist/', 'build/', '.eslintrc.js'],
 
   rules: {
     'import/no-unresolved': 'error',
@@ -40,6 +40,13 @@ module.exports = {
       'error',
       {
         checksVoidReturn: false,
+      },
+    ],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
       },
     ],
   },
