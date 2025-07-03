@@ -1,5 +1,9 @@
 import { RequestHandler } from 'express';
-import { calendar, createCalendar } from '../services/googleCalendar.service';
+import {
+  calendar,
+  createCalendar,
+  removeCalendar,
+} from '../services/googleCalendar.service';
 import { AppError } from '../middleware/error.middleware';
 
 export const getCalendars: RequestHandler = async (
@@ -53,6 +57,20 @@ export const postCalendar: RequestHandler<
   try {
     const calendarResponse = await createCalendar(calendarData);
     response.status(201).json({ data: calendarResponse });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteCalendar: RequestHandler = async (
+  request,
+  response,
+  next,
+) => {
+  const { calendarId } = request.params;
+  try {
+    await removeCalendar(calendarId);
+    response.status(204).send();
   } catch (error) {
     next(error);
   }

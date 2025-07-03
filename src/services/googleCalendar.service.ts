@@ -57,7 +57,7 @@ export const updateCalendarEvent = async (
   });
 };
 
-export const deleteCalendarEvent = async (
+export const removeCalendarEvent = async (
   calendarId: string,
   eventId: string,
 ): Promise<void> => {
@@ -92,7 +92,7 @@ export const createCalendar = async (
   return response.data;
 };
 
-export const deleteCalendar = async (calendarId: string): Promise<void> => {
+export const removeCalendar = async (calendarId: string): Promise<void> => {
   await calendar.calendars.delete({
     calendarId,
   });
