@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { logger } from '../utils/logger';
 
 export interface AppError extends Error {
@@ -20,6 +20,7 @@ export default function errorHandler(
   error: AppError,
   request: Request,
   response: Response,
+  _next: NextFunction,
 ) {
   logger.error(
     `[${request.method} ${request.url}] Error occurred:`,
