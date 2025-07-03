@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { getCalendarEvents } from '../controllers/calendar.controller';
+import { getCalendars } from '../controllers/calendar.controller';
 
 const router = Router();
 
-router.get('/events', getCalendarEvents);
+router.get('/', getCalendars);
 
 export default router;
