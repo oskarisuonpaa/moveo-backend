@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { RequestHandler } from 'express';
 import { AppError } from '../middleware/error.middleware';
 import {
   createCalendarEvent,
@@ -6,10 +6,10 @@ import {
 } from '../services/googleCalendar.service';
 import { calendar_v3 } from 'googleapis';
 
-export const getCalendarEvents = async (
-  request: Request,
-  response: Response,
-  next: NextFunction,
+export const getCalendarEvents: RequestHandler = async (
+  request,
+  response,
+  next,
 ) => {
   try {
     const { calendarId } = request.params;
@@ -21,10 +21,10 @@ export const getCalendarEvents = async (
   }
 };
 
-export const postCalendarEvent = async (
-  request: Request,
-  response: Response,
-  next: NextFunction,
+export const postCalendarEvent: RequestHandler = async (
+  request,
+  response,
+  next,
 ) => {
   try {
     const { calendarId } = request.params;
