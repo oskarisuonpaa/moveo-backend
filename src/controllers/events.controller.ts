@@ -14,12 +14,6 @@ export const getCalendarEvents = async (
   try {
     const { calendarId } = request.params;
 
-    if (!calendarId || typeof calendarId !== 'string') {
-      const error = new Error('Invalid calendar ID') as AppError;
-      error.status = 400;
-      return next(error);
-    }
-
     const events = await listCalendarEvents(calendarId);
     response.json(events);
   } catch (error) {
@@ -35,12 +29,6 @@ export const postCalendarEvent = async (
   try {
     const { calendarId } = request.params;
     const event = request.body as calendar_v3.Schema$Event;
-
-    if (!calendarId || typeof calendarId !== 'string') {
-      const error = new Error('Invalid calendar ID') as AppError;
-      error.status = 400;
-      return next(error);
-    }
 
     if (!event || typeof event !== 'object') {
       const error = new Error('Invalid event data') as AppError;
