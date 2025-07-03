@@ -5,6 +5,12 @@ import {
   removeCalendar,
 } from '../services/googleCalendar.service';
 import { AppError } from '../middleware/error.middleware';
+import { calendar_v3 } from 'googleapis';
+
+export interface CalendarSummary {
+  calendarId: string;
+  alias: string;
+}
 
 export const getCalendars: RequestHandler = async (
   _request,
@@ -13,7 +19,22 @@ export const getCalendars: RequestHandler = async (
 ) => {
   try {
     const calendarResponse = await calendar.calendarList.list();
-    response.status(200).json({ data: calendarResponse.data.items });
+    const { items: calendars = [] } = calendarResponse.data;
+
+    if (!calendars || calendars.length === 0) {
+      const error = new Error('No calendars found') as AppError;
+      error.status = 404;
+      return next(error);
+    }
+
+    const data: CalendarSummary[] = calendars.map(
+      (calendar: calendar_v3.Schema$CalendarListEntry) => ({
+        calendarId: calendar.id as string,
+        alias: calendar.summary as string,
+      }),
+    );
+
+    response.status(200).json({ data });
   } catch (error) {
     next(error);
   }
@@ -25,7 +46,19 @@ export const getCalendar: RequestHandler = async (request, response, next) => {
     const calendarResponse = await calendar.calendars.get({
       calendarId,
     });
-    response.status(200).json({ data: calendarResponse.data });
+
+    if (!calendarResponse.data) {
+      const error = new Error('Calendar not found') as AppError;
+      error.status = 404;
+      return next(error);
+    }
+
+    const data: CalendarSummary = {
+      calendarId: calendarResponse.data.id as string,
+      alias: calendarResponse.data.summary as string,
+    };
+
+    response.status(200).json({ data });
   } catch (error) {
     next(error);
   }
