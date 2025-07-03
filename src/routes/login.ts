@@ -1,9 +1,9 @@
-import express from 'express'
-import { loginUser } from '../controllers/login.controller'
+import express from 'express';
+import { loginUser } from '../controllers/login.controller';
 
-const router = express.Router()
+const router = express.Router();
 
 // Delegate POST request to the controller
-router.post('/', loginUser)
+router.post('/', loginUser);
 
-export default router
+export default router;
