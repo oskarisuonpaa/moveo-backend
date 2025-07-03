@@ -11,20 +11,22 @@ export const calendar = google.calendar({
   auth,
 });
 
-export const listCalendarEvents = async (calendarId: string) => {
+export const listCalendarEvents = async (
+  calendarId: string,
+): Promise<calendar_v3.Schema$Event[]> => {
   const response = await calendar.events.list({
     calendarId,
     timeMin: new Date().toISOString(),
     singleEvents: true,
     orderBy: 'startTime',
   });
-  return response.data.items || [];
+  return response.data.items ?? [];
 };
 
 export const createCalendarEvent = async (
   calendarId: string,
   event: calendar_v3.Schema$Event,
-) => {
+): Promise<void> => {
   await calendar.events.insert({
     calendarId,
     requestBody: event,
