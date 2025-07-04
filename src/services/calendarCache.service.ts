@@ -21,6 +21,6 @@ export const getCalendarAliasMap = async (): Promise<
   return calendarIdByAlias;
 };
 
-export const invalidateCalendarCache = () => {
+export const invalidateCalendarAliasCache = () => {
   calendarIdByAlias = null;
 };

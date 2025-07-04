@@ -1,11 +1,8 @@
 import { RequestHandler } from 'express';
-import {
-  calendar,
-  createCalendar,
-  removeCalendar,
-} from '../services/googleCalendar.service';
+import { calendar, removeCalendar } from '../services/googleCalendar.service';
 import { AppError } from '../middleware/error.middleware';
 import { getCalendarSummaries } from '../services/calendar.service';
+import { createAndSyncCalendar } from '../services/calendarManagement.service';
 
 export interface CalendarSummary {
   calendarId: string;
@@ -65,16 +62,13 @@ export const postCalendar: RequestHandler<
     return next(error);
   }
 
-  const calendarData = {
-    summary: alias,
-    timeZone: 'Europe/Helsinki',
-  };
-
   try {
-    const calendarResponse = await createCalendar(calendarData);
-    response.status(201).json({ data: calendarResponse });
+    const calendar = await createAndSyncCalendar(alias);
+    response.status(201).json({ data: calendar });
   } catch (error) {
-    next(error);
+    const appError = error as AppError;
+    appError.status = appError.status || 500;
+    next(appError);
   }
 };
 

@@ -26,6 +26,6 @@ export const getCalendarSummaries = async (): Promise<CalendarSummary[]> => {
   return summaries;
 };
 
-export const invalidateCalendarCache = () => {
+export const invalidateCalendarSummariesCache = () => {
   cachedSummaries = null;
 };
