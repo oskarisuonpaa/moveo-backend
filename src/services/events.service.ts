@@ -26,3 +26,19 @@ export const getCalendarEventsByCalendarAlias = async (
   };
   return events;
 };
+
+export const getCalendarEventById = async (
+  alias: string,
+  eventId: string,
+): Promise<calendar_v3.Schema$Event> => {
+  const events = await getCalendarEventsByCalendarAlias(alias);
+  const event = events.find((e) => e.id === eventId);
+  if (!event) {
+    throw new Error(`Event with ID ${eventId} not found in calendar ${alias}`);
+  }
+  return event;
+};
+
+export const invalidateCalendarEventsCache = () => {
+  cachedCalendarEvents = null;
+};

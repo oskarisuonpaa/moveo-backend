@@ -2,7 +2,10 @@ import { RequestHandler } from 'express';
 import { AppError } from '../middleware/error.middleware';
 import { createCalendarEvent } from '../services/googleCalendar.service';
 import { calendar_v3 } from 'googleapis';
-import { getCalendarEventsByCalendarAlias } from '../services/events.service';
+import {
+  getCalendarEventById,
+  getCalendarEventsByCalendarAlias,
+} from '../services/events.service';
 
 export const getCalendarEvents: RequestHandler = async (
   request,
@@ -12,6 +15,22 @@ export const getCalendarEvents: RequestHandler = async (
   try {
     const { alias } = request.params;
     const data = await getCalendarEventsByCalendarAlias(alias);
+    response.status(200).json({ data });
+  } catch (error) {
+    const appError = error as AppError;
+    appError.status = appError.status || 404;
+    next(appError);
+  }
+};
+
+export const getCalendarEvent: RequestHandler = async (
+  request,
+  response,
+  next,
+) => {
+  try {
+    const { alias, eventId } = request.params;
+    const data = await getCalendarEventById(alias, eventId);
     response.status(200).json({ data });
   } catch (error) {
     const appError = error as AppError;
