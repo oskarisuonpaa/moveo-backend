@@ -1,32 +1,38 @@
 import { RequestHandler } from 'express';
-import {
-  calendar,
-  createCalendar,
-  removeCalendar,
-} from '../services/googleCalendar.service';
 import { AppError } from '../middleware/error.middleware';
+import {
+  getCalendarSummaries,
+  getCalendarSummaryByAlias,
+} from '../services/calendar.service';
+import {
+  createAndSyncCalendar,
+  removeCalendar,
+} from '../services/calendarManagement.service';
 
-export const getCalendars: RequestHandler = async (
-  _request,
-  response,
-  next,
-) => {
+export interface CalendarSummary {
+  calendarId: string;
+  alias: string;
+}
+
+export const getCalendars: RequestHandler = async (_req, res, next) => {
   try {
-    const calendarResponse = await calendar.calendarList.list();
-    response.status(200).json({ data: calendarResponse.data.items });
-  } catch (error) {
+    const data = await getCalendarSummaries();
+    res.status(200).json({ data });
+  } catch (err) {
+    const error = err as AppError;
+    error.status = error.status || 404;
     next(error);
   }
 };
 
 export const getCalendar: RequestHandler = async (request, response, next) => {
-  const { calendarId } = request.params;
+  const { alias } = request.params;
   try {
-    const calendarResponse = await calendar.calendars.get({
-      calendarId,
-    });
-    response.status(200).json({ data: calendarResponse.data });
-  } catch (error) {
+    const data = await getCalendarSummaryByAlias(alias);
+    response.status(200).json({ data });
+  } catch (err) {
+    const error = err as AppError;
+    error.status = error.status || 404;
     next(error);
   }
 };
@@ -49,16 +55,13 @@ export const postCalendar: RequestHandler<
     return next(error);
   }
 
-  const calendarData = {
-    summary: alias,
-    timeZone: 'Europe/Helsinki',
-  };
-
   try {
-    const calendarResponse = await createCalendar(calendarData);
-    response.status(201).json({ data: calendarResponse });
+    const calendar = await createAndSyncCalendar(alias);
+    response.status(201).json({ data: calendar });
   } catch (error) {
-    next(error);
+    const appError = error as AppError;
+    appError.status = appError.status || 500;
+    next(appError);
   }
 };
 
@@ -67,11 +70,13 @@ export const deleteCalendar: RequestHandler = async (
   response,
   next,
 ) => {
-  const { calendarId } = request.params;
+  const { alias } = request.params;
   try {
-    await removeCalendar(calendarId);
+    await removeCalendar(alias);
     response.status(204).send();
   } catch (error) {
-    next(error);
+    const appError = error as AppError;
+    appError.status = appError.status || 404;
+    next(appError);
   }
 };
