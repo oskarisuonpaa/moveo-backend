@@ -45,8 +45,8 @@ export const postCalendar: RequestHandler<
   }
 
   try {
-    const calendar = await createAndSyncCalendar(alias);
-    response.status(201).json({ data: calendar });
+    const newCalendar = await createAndSyncCalendar(alias);
+    response.status(201).json({ data: newCalendar });
   } catch (error) {
     const appError = error as AppError;
     appError.status = appError.status || 500;
