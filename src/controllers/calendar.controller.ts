@@ -75,6 +75,8 @@ export const deleteCalendar: RequestHandler = async (
     await removeCalendar(alias);
     response.status(204).send();
   } catch (error) {
-    next(error);
+    const appError = error as AppError;
+    appError.status = appError.status || 404;
+    next(appError);
   }
 };
