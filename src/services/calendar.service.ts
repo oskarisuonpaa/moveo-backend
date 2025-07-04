@@ -26,6 +26,17 @@ export const getCalendarSummaries = async (): Promise<CalendarSummary[]> => {
   return summaries;
 };
 
+export const getCalendarSummaryByAlias = async (
+  alias: string,
+): Promise<CalendarSummary> => {
+  const summaries = await getCalendarSummaries();
+  const summary = summaries.find((s) => s.alias === alias);
+  if (!summary) {
+    throw new Error(`Calendar with alias "${alias}" not found`);
+  }
+  return summary;
+};
+
 export const invalidateCalendarSummariesCache = () => {
   cachedSummaries = null;
 };

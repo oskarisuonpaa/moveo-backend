@@ -1,7 +1,10 @@
 import { RequestHandler } from 'express';
-import { calendar, removeCalendar } from '../services/googleCalendar.service';
+import { removeCalendar } from '../services/googleCalendar.service';
 import { AppError } from '../middleware/error.middleware';
-import { getCalendarSummaries } from '../services/calendar.service';
+import {
+  getCalendarSummaries,
+  getCalendarSummaryByAlias,
+} from '../services/calendar.service';
 import { createAndSyncCalendar } from '../services/calendarManagement.service';
 
 export interface CalendarSummary {
@@ -21,25 +24,13 @@ export const getCalendars: RequestHandler = async (_req, res, next) => {
 };
 
 export const getCalendar: RequestHandler = async (request, response, next) => {
-  const { calendarId } = request.params;
+  const { alias } = request.params;
   try {
-    const calendarResponse = await calendar.calendars.get({
-      calendarId,
-    });
-
-    if (!calendarResponse.data) {
-      const error = new Error('Calendar not found') as AppError;
-      error.status = 404;
-      return next(error);
-    }
-
-    const data: CalendarSummary = {
-      calendarId: calendarResponse.data.id as string,
-      alias: calendarResponse.data.summary as string,
-    };
-
+    const data = await getCalendarSummaryByAlias(alias);
     response.status(200).json({ data });
-  } catch (error) {
+  } catch (err) {
+    const error = err as AppError;
+    error.status = error.status || 404;
     next(error);
   }
 };

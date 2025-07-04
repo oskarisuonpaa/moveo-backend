@@ -10,9 +10,9 @@ import { requireRequestBody } from '../middleware/validateRequestBody.middleware
 const router = Router();
 
 router.get('/', getCalendars);
-router.get('/:calendarId', getCalendar);
+router.get('/:alias', getCalendar);
 router.post('/', requireRequestBody, postCalendar);
-router.delete('/:calendarId', deleteCalendar);
-// router.put('/:calendarId', updateCalendar);
+router.delete('/:alias', deleteCalendar);
+// router.put('/:alias', updateCalendar);
 
 export default router;
