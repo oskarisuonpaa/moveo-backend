@@ -39,6 +39,8 @@
   "dependencies": {
     "googleapis": "^150.0.1",
     "jsonwebtoken": "^9.0.2",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.25",
     "wordpress-hash-node": "^1.0.0",
     "zod": "^3.25.71"
   }

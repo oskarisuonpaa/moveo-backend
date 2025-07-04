@@ -5,37 +5,20 @@ import {
   removeCalendar,
 } from '../services/googleCalendar.service';
 import { AppError } from '../middleware/error.middleware';
-import { calendar_v3 } from 'googleapis';
+import { getCalendarSummaries } from '../services/calendar.service';
 
 export interface CalendarSummary {
   calendarId: string;
   alias: string;
 }
 
-export const getCalendars: RequestHandler = async (
-  _request,
-  response,
-  next,
-) => {
+export const getCalendars: RequestHandler = async (_req, res, next) => {
   try {
-    const calendarResponse = await calendar.calendarList.list();
-    const { items: calendars = [] } = calendarResponse.data;
-
-    if (!calendars || calendars.length === 0) {
-      const error = new Error('No calendars found') as AppError;
-      error.status = 404;
-      return next(error);
-    }
-
-    const data: CalendarSummary[] = calendars.map(
-      (calendar: calendar_v3.Schema$CalendarListEntry) => ({
-        calendarId: calendar.id as string,
-        alias: calendar.summary as string,
-      }),
-    );
-
-    response.status(200).json({ data });
-  } catch (error) {
+    const data = await getCalendarSummaries();
+    res.status(200).json({ data });
+  } catch (err) {
+    const error = err as AppError;
+    error.status = error.status || 404;
     next(error);
   }
 };
