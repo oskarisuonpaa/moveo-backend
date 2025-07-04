@@ -1,11 +1,13 @@
 import { RequestHandler } from 'express';
-import { removeCalendar } from '../services/googleCalendar.service';
 import { AppError } from '../middleware/error.middleware';
 import {
   getCalendarSummaries,
   getCalendarSummaryByAlias,
 } from '../services/calendar.service';
-import { createAndSyncCalendar } from '../services/calendarManagement.service';
+import {
+  createAndSyncCalendar,
+  removeCalendar,
+} from '../services/calendarManagement.service';
 
 export interface CalendarSummary {
   calendarId: string;
@@ -68,9 +70,9 @@ export const deleteCalendar: RequestHandler = async (
   response,
   next,
 ) => {
-  const { calendarId } = request.params;
+  const { alias } = request.params;
   try {
-    await removeCalendar(calendarId);
+    await removeCalendar(alias);
     response.status(204).send();
   } catch (error) {
     next(error);

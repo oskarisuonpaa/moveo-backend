@@ -23,3 +23,18 @@ export const createAndSyncCalendar = async (alias: string) => {
 
   return calendar;
 };
+
+export const removeCalendar = async (alias: string) => {
+  const repository = AppDataSource.getRepository(Calendar);
+  const calendar = await repository.findOne({ where: { alias } });
+
+  if (!calendar) {
+    throw new Error('Calendar not found');
+  }
+
+  await googleCalendar.removeCalendar(calendar.calendarId);
+  await repository.remove(calendar);
+
+  invalidateCalendarAliasCache();
+  invalidateCalendarSummariesCache();
+};
