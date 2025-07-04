@@ -1,10 +1,8 @@
 import { RequestHandler } from 'express';
 import { AppError } from '../middleware/error.middleware';
-import {
-  createCalendarEvent,
-  listCalendarEvents,
-} from '../services/googleCalendar.service';
+import { createCalendarEvent } from '../services/googleCalendar.service';
 import { calendar_v3 } from 'googleapis';
+import { getCalendarEventsByCalendarAlias } from '../services/events.service';
 
 export const getCalendarEvents: RequestHandler = async (
   request,
@@ -12,12 +10,13 @@ export const getCalendarEvents: RequestHandler = async (
   next,
 ) => {
   try {
-    const { calendarId } = request.params;
-
-    const events = await listCalendarEvents(calendarId);
-    response.json(events);
+    const { alias } = request.params;
+    const data = await getCalendarEventsByCalendarAlias(alias);
+    response.status(200).json({ data });
   } catch (error) {
-    next(error);
+    const appError = error as AppError;
+    appError.status = appError.status || 404;
+    next(appError);
   }
 };
 
@@ -27,7 +26,7 @@ export const postCalendarEvent: RequestHandler = async (
   next,
 ) => {
   try {
-    const { calendarId } = request.params;
+    const { alias } = request.params;
     const event = request.body as calendar_v3.Schema$Event;
 
     if (!event || typeof event !== 'object') {
@@ -36,7 +35,7 @@ export const postCalendarEvent: RequestHandler = async (
       return next(error);
     }
 
-    const newEvent = await createCalendarEvent(calendarId, event);
+    const newEvent = await createCalendarEvent(alias, event);
     response.status(201).json(newEvent);
   } catch (error) {
     next(error);
