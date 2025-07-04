@@ -1,5 +1,13 @@
 # Moveo Backend
 
+## Get Started
+
+1. Clone the repository
+2. Navigate to the repository directory
+3. Add **.env** (optional) and **service-account.json** files to the root
+4. Run `npm install` to install depedencies
+5. Run `npm run dev` to start a development server
+
 ## Routes
 
 ### /api/calendars
