@@ -9,9 +9,11 @@ export const getCalendarAliasMap = async (): Promise<
   if (calendarIdByAlias) {
     return calendarIdByAlias;
   }
+
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
   }
+
   const repository = AppDataSource.getRepository(Calendar);
   const calendars = await repository.find();
   calendarIdByAlias = calendars.reduce(
