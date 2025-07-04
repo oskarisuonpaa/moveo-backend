@@ -1,22 +1,14 @@
 import { getCalendarAliasMap } from './calendarCache.service';
 
-export interface CalendarSummary {
-  calendarId: string;
-  alias: string;
-}
+let cachedSummaries: string[] | null = null;
 
-let cachedSummaries: CalendarSummary[] | null = null;
-
-export const getCalendarSummaries = async (): Promise<CalendarSummary[]> => {
+export const getCalendarSummaries = async (): Promise<string[]> => {
   if (cachedSummaries) {
     return cachedSummaries;
   }
 
   const aliasMap = await getCalendarAliasMap();
-  const summaries = Object.entries(aliasMap).map(([alias, calendarId]) => ({
-    alias,
-    calendarId,
-  }));
+  const summaries = Object.entries(aliasMap).map(([alias]) => alias);
 
   if (summaries.length === 0) {
     throw new Error('No calendars found');
@@ -24,17 +16,6 @@ export const getCalendarSummaries = async (): Promise<CalendarSummary[]> => {
 
   cachedSummaries = summaries;
   return summaries;
-};
-
-export const getCalendarSummaryByAlias = async (
-  alias: string,
-): Promise<CalendarSummary> => {
-  const summaries = await getCalendarSummaries();
-  const summary = summaries.find((s) => s.alias === alias);
-  if (!summary) {
-    throw new Error(`Calendar with alias "${alias}" not found`);
-  }
-  return summary;
 };
 
 export const invalidateCalendarSummariesCache = () => {
