@@ -1,9 +1,6 @@
 import { RequestHandler } from 'express';
 import { AppError } from '../middleware/error.middleware';
-import {
-  getCalendarSummaries,
-  getCalendarSummaryByAlias,
-} from '../services/calendar.service';
+import { getCalendarSummaries } from '../services/calendar.service';
 import {
   createAndSyncCalendar,
   removeCalendar,
@@ -18,18 +15,6 @@ export const getCalendars: RequestHandler = async (_req, res, next) => {
   try {
     const data = await getCalendarSummaries();
     res.status(200).json({ data });
-  } catch (err) {
-    const error = err as AppError;
-    error.status = error.status || 404;
-    next(error);
-  }
-};
-
-export const getCalendar: RequestHandler = async (request, response, next) => {
-  const { alias } = request.params;
-  try {
-    const data = await getCalendarSummaryByAlias(alias);
-    response.status(200).json({ data });
   } catch (err) {
     const error = err as AppError;
     error.status = error.status || 404;
