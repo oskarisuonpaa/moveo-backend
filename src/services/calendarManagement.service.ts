@@ -30,7 +30,7 @@ export const removeCalendar = async (alias: string) => {
   const calendar = await repository.findOne({ where: { alias } });
 
   if (!calendar) {
-    throw new AppError('Calendar not found');
+    throw new AppError('Calendar not found', 404);
   }
 
   await googleCalendar.removeCalendar(calendar.calendarId);
