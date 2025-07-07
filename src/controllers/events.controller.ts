@@ -1,5 +1,4 @@
 import { RequestHandler } from 'express';
-import { AppError } from '../middleware/error.middleware';
 import { calendar_v3 } from 'googleapis';
 import {
   getCalendarEventById,
@@ -7,79 +6,61 @@ import {
 } from '../services/events.service';
 import { createAndSyncCalendarEvent } from '../services/eventManagement.service';
 import { sanitizeGoogleCalendarEventFormat } from '../utils/sanitizeGoogleCalendarEventFormat';
+import { successResponse } from '../utils/responses';
+import { asyncHandler } from '../utils/asyncHandler';
+import { AppError } from '../utils/errors';
 
-export const getCalendarEvents: RequestHandler = async (
-  request,
-  response,
-  next,
-) => {
-  try {
+export const getCalendarEvents: RequestHandler = asyncHandler(
+  async (request, response) => {
     const { alias } = request.params;
     const rawData = await getCalendarEventsByCalendarAlias(alias);
     const data = rawData.map((event) =>
       sanitizeGoogleCalendarEventFormat(event),
     );
-    response.status(200).json({ data });
-  } catch (error) {
-    const appError = error as AppError;
-    appError.status = appError.status || 404;
-    next(appError);
-  }
-};
+    successResponse(response, data);
+  },
+);
 
-export const getCalendarEvent: RequestHandler = async (
-  request,
-  response,
-  next,
-) => {
-  try {
+export const getCalendarEvent: RequestHandler = asyncHandler(
+  async (request, response) => {
     const { alias, eventId } = request.params;
     const rawData = await getCalendarEventById(alias, eventId);
     const data = sanitizeGoogleCalendarEventFormat(rawData);
-    response.status(200).json({ data });
-  } catch (error) {
-    const appError = error as AppError;
-    appError.status = appError.status || 404;
-    next(appError);
-  }
-};
+    successResponse(response, data);
+  },
+);
 
-export const postCalendarEvent: RequestHandler = async (
-  request,
-  response,
-  next,
-) => {
-  const { alias } = request.params;
-  const { start, end, summary, description } = request.body as {
-    start: string;
-    end: string;
-    summary?: string;
-    description?: string;
-  };
+export const postCalendarEvent: RequestHandler = asyncHandler(
+  async (request, response) => {
+    const { alias } = request.params;
+    const { start, end, summary, description } = request.body as {
+      start: string;
+      end: string;
+      summary?: string;
+      description?: string;
+    };
 
-  if (!alias || typeof alias !== 'string') {
-    const error = new Error('Invalid calendar alias') as AppError;
-    error.status = 400;
-    return next(error);
-  }
+    if (!alias || typeof alias !== 'string') {
+      throw new AppError('Invalid calendar alias', 400);
+    }
 
-  if (!start || !end || typeof start !== 'string' || typeof end !== 'string') {
-    const error = new Error('Invalid event dates') as AppError;
-    error.status = 400;
-    return next(error);
-  }
+    if (
+      !start ||
+      !end ||
+      typeof start !== 'string' ||
+      typeof end !== 'string'
+    ) {
+      throw new AppError('Invalid event dates', 400);
+    }
 
-  const event: calendar_v3.Schema$Event = {
-    start: { dateTime: start },
-    end: { dateTime: end },
-    summary: summary || 'No Title',
-    description: description || 'No Description',
-  };
+    const event: calendar_v3.Schema$Event = {
+      start: { dateTime: start },
+      end: { dateTime: end },
+      summary: summary || 'No Title',
+      description: description || 'No Description',
+    };
 
-  try {
     await createAndSyncCalendarEvent(alias, event);
-    response.sendStatus(201);
-  } catch (error) {
-    next(error);
-  }
-};
+    successResponse(response, null, 201);
+  },
+);
