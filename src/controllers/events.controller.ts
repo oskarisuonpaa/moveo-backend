@@ -6,6 +6,7 @@ import {
   getCalendarEventsByCalendarAlias,
 } from '../services/events.service';
 import { createAndSyncCalendarEvent } from '../services/eventManagement.service';
+import { sanitizeGoogleCalendarEventFormat } from '../utils/sanitizeGoogleCalendarEventFormat';
 
 export const getCalendarEvents: RequestHandler = async (
   request,
@@ -14,7 +15,10 @@ export const getCalendarEvents: RequestHandler = async (
 ) => {
   try {
     const { alias } = request.params;
-    const data = await getCalendarEventsByCalendarAlias(alias);
+    const rawData = await getCalendarEventsByCalendarAlias(alias);
+    const data = rawData.map((event) =>
+      sanitizeGoogleCalendarEventFormat(event),
+    );
     response.status(200).json({ data });
   } catch (error) {
     const appError = error as AppError;
@@ -30,7 +34,8 @@ export const getCalendarEvent: RequestHandler = async (
 ) => {
   try {
     const { alias, eventId } = request.params;
-    const data = await getCalendarEventById(alias, eventId);
+    const rawData = await getCalendarEventById(alias, eventId);
+    const data = sanitizeGoogleCalendarEventFormat(rawData);
     response.status(200).json({ data });
   } catch (error) {
     const appError = error as AppError;

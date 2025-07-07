@@ -10,11 +10,8 @@ export const createAndSyncCalendarEvent = async (
   const calendarAliasMap = await getCalendarAliasMap();
   const calendarId = calendarAliasMap[alias];
 
-  const createdEvent = await googleCalendar.createCalendarEvent(
-    calendarId,
-    event,
-  );
+  await googleCalendar.createCalendarEvent(calendarId, event);
 
   invalidateCalendarEventsCache();
-  return createdEvent;
+  return event;
 };
