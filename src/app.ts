@@ -6,6 +6,9 @@ import eventsRouter from './routes/events.route';
 import { logger } from './utils/logger';
 
 const app = express();
+const cors = require('cors');
+
+app.use(cors());
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
   logger.trace(`${req.method} ${req.originalUrl}`);
