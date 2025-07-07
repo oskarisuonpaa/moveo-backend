@@ -11,10 +11,14 @@ export interface CalendarSummary {
   alias: string;
 }
 
-export const getCalendars: RequestHandler = async (_req, res, next) => {
+export const getCalendars: RequestHandler = async (
+  _request,
+  response,
+  next,
+) => {
   try {
     const data = await getCalendarSummaries();
-    res.status(200).json({ data });
+    response.status(200).json({ data });
   } catch (err) {
     const error = err as AppError;
     error.status = error.status || 404;
@@ -41,8 +45,8 @@ export const postCalendar: RequestHandler<
   }
 
   try {
-    const calendar = await createAndSyncCalendar(alias);
-    response.status(201).json({ data: calendar });
+    const newCalendar = await createAndSyncCalendar(alias);
+    response.status(201).json({ data: newCalendar });
   } catch (error) {
     const appError = error as AppError;
     appError.status = appError.status || 500;
