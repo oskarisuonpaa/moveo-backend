@@ -77,8 +77,8 @@ export const postCalendarEvent: RequestHandler = async (
   };
 
   try {
-    const newEvent = await createAndSyncCalendarEvent(alias, event);
-    response.status(201).json({ data: newEvent });
+    await createAndSyncCalendarEvent(alias, event);
+    response.sendStatus(201);
   } catch (error) {
     next(error);
   }

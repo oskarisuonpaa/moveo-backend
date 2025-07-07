@@ -13,5 +13,4 @@ export const createAndSyncCalendarEvent = async (
   await googleCalendar.createCalendarEvent(calendarId, event);
 
   invalidateCalendarEventsCache();
-  return event;
 };
