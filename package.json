@@ -37,6 +37,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "googleapis": "^150.0.1",
     "jsonwebtoken": "^9.0.2",
     "reflect-metadata": "^0.2.2",
