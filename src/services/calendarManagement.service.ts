@@ -1,5 +1,6 @@
 import { AppDataSource } from '../database/data-source';
 import { Calendar } from '../models/calendar.model';
+import { AppError } from '../utils/errors';
 import { invalidateCalendarSummariesCache } from './calendar.service';
 import { invalidateCalendarAliasCache } from './calendarCache.service';
 import * as googleCalendar from './googleCalendar.service';
@@ -29,7 +30,7 @@ export const removeCalendar = async (alias: string) => {
   const calendar = await repository.findOne({ where: { alias } });
 
   if (!calendar) {
-    throw new Error('Calendar not found');
+    throw new AppError('Calendar not found');
   }
 
   await googleCalendar.removeCalendar(calendar.calendarId);
