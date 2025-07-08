@@ -1,8 +1,6 @@
 import { calendar_v3 } from 'googleapis';
 
-export const sanitizeGoogleCalendarEventFormat = (
-  event: calendar_v3.Schema$Event,
-) => {
+const sanitizeGoogleCalendarEventFormat = (event: calendar_v3.Schema$Event) => {
   const sanitizedEvent = {
     id: event.id,
     title: event.summary,
@@ -20,3 +18,5 @@ export const sanitizeGoogleCalendarEventFormat = (
 
   return sanitizedEvent;
 };
+
+export default sanitizeGoogleCalendarEventFormat;

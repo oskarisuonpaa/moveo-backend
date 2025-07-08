@@ -5,7 +5,7 @@ import {
   getCalendarEventsByCalendarAlias,
 } from '@services/events/events.service';
 import { createAndSyncCalendarEvent } from '@services/events/eventManagement.service';
-import { sanitizeGoogleCalendarEventFormat } from '@utils/sanitizeGoogleCalendarEventFormat';
+import sanitizeGoogleCalendarEventFormat from '@utils/sanitizeGoogleCalendarEventFormat';
 import { successResponse } from '@utils/responses';
 import { asyncHandler } from '@utils/asyncHandler';
 import { AppError } from '@utils/errors';
