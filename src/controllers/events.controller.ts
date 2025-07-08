@@ -33,11 +33,12 @@ export const getCalendarEvent: RequestHandler = asyncHandler(
 export const postCalendarEvent: RequestHandler = asyncHandler(
   async (request, response) => {
     const { alias } = request.params;
-    const { start, end, summary, description } = request.body as {
+    const { start, end, summary, description, location } = request.body as {
       start: string;
       end: string;
       summary?: string;
       description?: string;
+      location?: string;
     };
 
     if (!alias || typeof alias !== 'string') {
@@ -58,6 +59,7 @@ export const postCalendarEvent: RequestHandler = asyncHandler(
       end: { dateTime: end },
       summary: summary || 'No Title',
       description: description || 'No Description',
+      location: location || undefined,
     };
 
     await createAndSyncCalendarEvent(alias, event);

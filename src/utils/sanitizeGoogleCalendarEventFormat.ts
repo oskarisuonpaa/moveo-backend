@@ -9,6 +9,7 @@ export const sanitizeGoogleCalendarEventFormat = (
     description: event.description,
     start: event.start?.dateTime,
     end: event.end?.dateTime,
+    location: event.location || 'No Location',
   };
 
   return sanitizedEvent;
