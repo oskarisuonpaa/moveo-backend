@@ -2,6 +2,7 @@ import { calendar_v3 } from 'googleapis';
 import { calendarAliasToId } from './calendarCache.service';
 import { listCalendarEvents } from './googleCalendar.service';
 import NodeCache from 'node-cache';
+import { AppError } from '../utils/errors';
 
 const EVENT_TTL_SECONDS = 5 * 60; // 5 minutes
 
@@ -31,7 +32,10 @@ export const getCalendarEventById = async (
   const events = await getCalendarEventsByCalendarAlias(alias);
   const event = events.find((e) => e.id === eventId);
   if (!event) {
-    throw new Error(`Event with ID ${eventId} not found in calendar ${alias}`);
+    throw new AppError(
+      `Event with ID ${eventId} not found in calendar ${alias}`,
+      404,
+    );
   }
   return event;
 };

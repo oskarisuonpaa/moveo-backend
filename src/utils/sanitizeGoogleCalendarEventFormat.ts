@@ -11,6 +11,11 @@ export const sanitizeGoogleCalendarEventFormat = (
     end: event.end?.dateTime,
     location: event.location || 'No Location',
     maxAttendees: event.extendedProperties?.private?.maxAttendees || 'No limit',
+    attendees:
+      event.attendees?.map((attendee) => ({
+        email: attendee.email,
+        responseStatus: attendee.responseStatus,
+      })) || [],
   };
 
   return sanitizedEvent;

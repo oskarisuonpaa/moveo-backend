@@ -57,6 +57,18 @@ export const updateCalendarEvent = async (
   });
 };
 
+export const patchCalendarEvent = async (
+  calendarId: string,
+  eventId: string,
+  event: Partial<calendar_v3.Schema$Event>,
+): Promise<void> => {
+  await calendar.events.patch({
+    calendarId,
+    eventId,
+    requestBody: event,
+  });
+};
+
 export const removeCalendarEvent = async (
   calendarId: string,
   eventId: string,
