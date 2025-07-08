@@ -7,7 +7,6 @@ export const successResponse = <T>(
   statusCode: number = 200,
 ) => {
   response.status(statusCode).json({
-    statusCode,
     data,
   });
 };
