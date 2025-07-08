@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { Calendar } from '../models/calendar.model';
-import config from '../config';
-import { logger } from '../utils/logger';
+import { Calendar } from '@models/calendar.model';
+import config from '@config';
+import logger from '@utils/logger';
 import { syncGoogleCalendarsToDb } from '@services/calendar/calendarSync.service';
 
 export const AppDataSource = new DataSource({

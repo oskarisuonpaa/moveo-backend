@@ -2,7 +2,7 @@
  * A utility logger object that provides various logging methods with different severity levels.
  * Each method logs messages with a timestamp and a specific color for better visibility in the console.
  */
-export const logger = {
+const logger = {
   /**
    * Logs a trace-level message.
    * Typically used for very detailed debugging information.
@@ -94,3 +94,5 @@ export const logger = {
     process.exit(1);
   },
 };
+
+export default logger;
