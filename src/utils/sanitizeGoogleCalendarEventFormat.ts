@@ -10,6 +10,7 @@ export const sanitizeGoogleCalendarEventFormat = (
     start: event.start?.dateTime,
     end: event.end?.dateTime,
     location: event.location || 'No Location',
+    maxAttendees: event.extendedProperties?.private?.maxAttendees || 'No limit',
   };
 
   return sanitizedEvent;
