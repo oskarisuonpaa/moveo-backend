@@ -51,6 +51,19 @@ export const patchCalendarEvent = async (
   eventId: string,
   event: Partial<calendar_v3.Schema$Event>,
 ): Promise<void> => {
+  /*
+  export const patchCalendarEvent = async (
+  userId: string,
+  calendarId: string,
+  eventId: string,
+  event: Partial<calendar_v3.Schema$Event>,
+): Promise<void> => {
+  await getUserCalendarClient(userId).events.patch({
+    calendarId,
+    eventId,
+    requestBody: event,
+  });
+  */
   await serviceCalendar.events.patch({
     calendarId,
     eventId,
