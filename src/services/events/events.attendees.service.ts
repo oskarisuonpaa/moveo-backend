@@ -1,10 +1,10 @@
-import { calendarAliasToId } from './calendarCache.service';
+import { AppError } from '@utils/errors';
+import { patchCalendarEvent } from '@services/google/googleCalendar.service';
 import {
   getCalendarEventById,
   invalidateCalendarEventsCache,
 } from './events.service';
-import { AppError } from '../utils/errors';
-import { patchCalendarEvent } from './googleCalendar.service';
+import { calendarAliasToId } from '@services/calendar/calendarCache.service';
 
 export const addAttendeeToEvent = async (
   alias: string,

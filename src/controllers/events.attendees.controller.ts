@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
-import { AppError } from '../utils/errors';
-import { successResponse } from '../utils/responses';
+import { AppError } from '@utils/errors';
+import { successResponse } from '@utils/responses';
 import {
   addAttendeeToEvent,
   removeAttendeeFromEvent,
-} from '../services/events.attendees.service';
-import { asyncHandler } from '../utils/asyncHandler';
+} from '@services/events/events.attendees.service';
+import { asyncHandler } from '@utils/asyncHandler';
 
 export const attendEvent: RequestHandler = asyncHandler(async (req, res) => {
   const { alias, eventId } = req.params;

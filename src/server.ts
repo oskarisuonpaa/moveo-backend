@@ -1,6 +1,6 @@
 import http from 'http';
 import app from './app';
-import { logger } from './utils/logger';
+import { logger } from '@utils/logger';
 import { initializeDataSource } from './database/data-source';
 
 const PORT = process.env.PORT || 3000;

@@ -1,8 +1,8 @@
 import { calendar_v3 } from 'googleapis';
-import { calendarAliasToId } from './calendarCache.service';
-import { listCalendarEvents } from './googleCalendar.service';
+import { calendarAliasToId } from '@services/calendar/calendarCache.service';
+import { listCalendarEvents } from '@services/google/googleCalendar.service';
 import NodeCache from 'node-cache';
-import { AppError } from '../utils/errors';
+import { AppError } from '@utils/errors';
 
 const EVENT_TTL_SECONDS = 5 * 60; // 5 minutes
 

@@ -3,12 +3,12 @@ import { calendar_v3 } from 'googleapis';
 import {
   getCalendarEventById,
   getCalendarEventsByCalendarAlias,
-} from '../services/events.service';
-import { createAndSyncCalendarEvent } from '../services/eventManagement.service';
-import { sanitizeGoogleCalendarEventFormat } from '../utils/sanitizeGoogleCalendarEventFormat';
-import { successResponse } from '../utils/responses';
-import { asyncHandler } from '../utils/asyncHandler';
-import { AppError } from '../utils/errors';
+} from '@services/events/events.service';
+import { createAndSyncCalendarEvent } from '@services/events/eventManagement.service';
+import { sanitizeGoogleCalendarEventFormat } from '@utils/sanitizeGoogleCalendarEventFormat';
+import { successResponse } from '@utils/responses';
+import { asyncHandler } from '@utils/asyncHandler';
+import { AppError } from '@utils/errors';
 
 export const getCalendarEvents: RequestHandler = asyncHandler(
   async (request, response) => {

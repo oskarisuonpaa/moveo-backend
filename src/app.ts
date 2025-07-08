@@ -4,8 +4,8 @@ import errorHandler from './middleware/error.middleware';
 import calendarRouter from './routes/calendar.route';
 import eventsRouter from './routes/events.route';
 import attendeesRouter from './routes/events.attendees.route';
-import { logger } from './utils/logger';
-import { AppError } from './utils/errors';
+import { logger } from '@utils/logger';
+import { AppError } from '@utils/errors';
 
 const app = express();
 

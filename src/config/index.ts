@@ -14,7 +14,8 @@ const config: Config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   database: process.env.DATABASE_URL || ':memory:',
   serviceAccount:
-    process.env.GOOGLE_APPLICATION_CREDENTIALS || '../../service-account.json',
+    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+    '../../../service-account.json',
 };
 
 export default config;
