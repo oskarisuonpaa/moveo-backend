@@ -39,6 +39,7 @@ export const postCalendarEvent: RequestHandler = asyncHandler(
       summary?: string;
       description?: string;
       location?: string;
+      maxAttendees?: number;
     };
 
     if (!alias || typeof alias !== 'string') {
