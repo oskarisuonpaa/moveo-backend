@@ -6,6 +6,9 @@ import { logger } from './utils/logger';
 import { AppError } from './utils/errors';
 
 const app = express();
+const cors = require('cors');
+
+app.use(cors());
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
   logger.trace(`${req.method} ${req.originalUrl}`);
