@@ -1,29 +1,26 @@
 import { calendar_v3 } from 'googleapis';
-import { getCalendarAliasMap } from './calendarCache.service';
+import { calendarAliasToId } from './calendarCache.service';
 import { listCalendarEvents } from './googleCalendar.service';
+import NodeCache from 'node-cache';
 
-let cachedCalendarEvents: Record<string, calendar_v3.Schema$Event[]> | null =
-  null;
+const EVENT_TTL_SECONDS = 5 * 60; // 5 minutes
+
+const eventCache = new NodeCache({ stdTTL: EVENT_TTL_SECONDS });
 
 export const getCalendarEventsByCalendarAlias = async (
   alias: string,
 ): Promise<calendar_v3.Schema$Event[]> => {
-  if (cachedCalendarEvents && cachedCalendarEvents[alias]) {
-    return cachedCalendarEvents[alias];
+  const cacheKey = `events:${alias}`;
+  const cachedEvents = eventCache.get(cacheKey) as calendar_v3.Schema$Event[];
+  if (cachedEvents) {
+    return cachedEvents;
   }
 
-  const aliasMap = await getCalendarAliasMap();
-  const calendarId = aliasMap[alias];
-
-  if (!calendarId) {
-    throw new Error(`Calendar with alias ${alias} not found`);
-  }
+  const calendarId = await calendarAliasToId(alias);
 
   const events = await listCalendarEvents(calendarId);
-  cachedCalendarEvents = {
-    ...cachedCalendarEvents,
-    [alias]: events,
-  };
+  eventCache.set(cacheKey, events);
+
   return events;
 };
 
@@ -39,6 +36,7 @@ export const getCalendarEventById = async (
   return event;
 };
 
-export const invalidateCalendarEventsCache = () => {
-  cachedCalendarEvents = null;
+export const invalidateCalendarEventsCache = (alias: string) => {
+  const cacheKey = `events:${alias}`;
+  eventCache.del(cacheKey);
 };

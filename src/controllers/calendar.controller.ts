@@ -1,5 +1,7 @@
 import { RequestHandler } from 'express';
-import { AppError } from '../middleware/error.middleware';
+import { asyncHandler } from '../utils/asyncHandler';
+import { badRequest } from '../utils/errors';
+import { successResponse } from '../utils/responses';
 import { getCalendarSummaries } from '../services/calendar.service';
 import {
   createAndSyncCalendar,
@@ -11,20 +13,12 @@ export interface CalendarSummary {
   alias: string;
 }
 
-export const getCalendars: RequestHandler = async (
-  _request,
-  response,
-  next,
-) => {
-  try {
+export const getCalendars: RequestHandler = asyncHandler(
+  async (_request, response) => {
     const data = await getCalendarSummaries();
-    response.status(200).json({ data });
-  } catch (err) {
-    const error = err as AppError;
-    error.status = error.status || 404;
-    next(error);
-  }
-};
+    successResponse(response, data);
+  },
+);
 
 interface PostCalendarBody {
   alias: string;
@@ -35,37 +29,20 @@ export const postCalendar: RequestHandler<
   unknown,
   PostCalendarBody,
   unknown
-> = async (request, response, next) => {
+> = asyncHandler(async (request, response) => {
   const { alias } = request.body;
-
   if (!alias || typeof alias !== 'string') {
-    const error = new Error('Invalid calendar alias') as AppError;
-    error.status = 400;
-    return next(error);
+    badRequest('Invalid calendar alias');
   }
 
-  try {
-    const newCalendar = await createAndSyncCalendar(alias);
-    response.status(201).json({ data: newCalendar });
-  } catch (error) {
-    const appError = error as AppError;
-    appError.status = appError.status || 500;
-    next(appError);
-  }
-};
+  const newCalendar = await createAndSyncCalendar(alias);
+  successResponse(response, newCalendar, 201);
+});
 
-export const deleteCalendar: RequestHandler = async (
-  request,
-  response,
-  next,
-) => {
-  const { alias } = request.params;
-  try {
+export const deleteCalendar: RequestHandler = asyncHandler(
+  async (request, response) => {
+    const { alias } = request.params;
     await removeCalendar(alias);
-    response.status(204).send();
-  } catch (error) {
-    const appError = error as AppError;
-    appError.status = appError.status || 404;
-    next(appError);
-  }
-};
+    successResponse(response, null, 204);
+  },
+);
