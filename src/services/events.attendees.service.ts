@@ -1,4 +1,3 @@
-import { calendar_v3 } from 'googleapis';
 import { calendarAliasToId } from './calendarCache.service';
 import {
   getCalendarEventById,
@@ -7,20 +6,12 @@ import {
 import { AppError } from '../utils/errors';
 import { patchCalendarEvent } from './googleCalendar.service';
 
-const fetchEvent = async (
-  alias: string,
-  eventId: string,
-): Promise<calendar_v3.Schema$Event> => {
-  const calendarId = await calendarAliasToId(alias);
-  return getCalendarEventById(calendarId, eventId);
-};
-
 export const addAttendeeToEvent = async (
   alias: string,
   eventId: string,
   email: string,
 ): Promise<void> => {
-  const event = await fetchEvent(alias, eventId);
+  const event = await getCalendarEventById(alias, eventId);
 
   const max = event.extendedProperties?.private?.maxAttendees
     ? parseInt(event.extendedProperties.private.maxAttendees, 10)
@@ -48,7 +39,7 @@ export async function removeAttendeeFromEvent(
   eventId: string,
   email: string,
 ) {
-  const event = await fetchEvent(alias, eventId);
+  const event = await getCalendarEventById(alias, eventId);
   const attendees = event.attendees?.filter((a) => a.email !== email) ?? [];
 
   await patchCalendarEvent(await calendarAliasToId(alias), eventId, {
