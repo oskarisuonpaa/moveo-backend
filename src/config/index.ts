@@ -7,6 +7,11 @@ interface Config {
   nodeEnv: string;
   serviceAccount: string;
   database: string;
+  google: {
+    clientId: string;
+    clientSecret: string;
+    redirectUri: string;
+  };
 }
 
 const config: Config = {
@@ -16,6 +21,11 @@ const config: Config = {
   serviceAccount:
     process.env.GOOGLE_APPLICATION_CREDENTIALS ||
     '../../../service-account.json',
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID || '',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    redirectUri: process.env.GOOGLE_REDIRECT_URI || '',
+  },
 };
 
 export default config;
