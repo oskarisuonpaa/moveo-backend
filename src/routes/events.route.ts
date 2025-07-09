@@ -1,16 +1,15 @@
 import { Router } from 'express';
 import {
+  getCalendarEvent,
   getCalendarEvents,
   postCalendarEvent,
 } from '../controllers/events.controller';
-import { requireCalendarId } from '../middleware/validateCalendarId.middleware';
-
 const router = Router();
 
-router.get('/:calendarId', requireCalendarId, getCalendarEvents);
-// router.get('/:calendarId/:eventId', getCalendarEvent);
-router.post('/:calendarId', requireCalendarId, postCalendarEvent);
-// router.delete('/:calendarId/:eventId', deleteCalendarEvent);
-// router.put('/:calendarId/:eventId', updateCalendarEvent);
+router.get('/:alias', getCalendarEvents);
+router.get('/:alias/:eventId', getCalendarEvent);
+router.post('/:alias', postCalendarEvent);
+// router.delete('/:alias/:eventId', deleteCalendarEvent);
+// router.put('/:alias/:eventId', updateCalendarEvent);
 
 export default router;

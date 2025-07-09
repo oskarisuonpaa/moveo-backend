@@ -1,0 +1,16 @@
+import { calendar_v3 } from 'googleapis';
+
+export const sanitizeGoogleCalendarEventFormat = (
+  event: calendar_v3.Schema$Event,
+) => {
+  const sanitizedEvent = {
+    id: event.id,
+    title: event.summary,
+    description: event.description,
+    start: event.start?.dateTime,
+    end: event.end?.dateTime,
+    location: event.location || 'No Location',
+  };
+
+  return sanitizedEvent;
+};
