@@ -13,6 +13,7 @@ interface Config {
     redirectUri: string;
   };
   jwtSecret: string;
+  frontendRedirectUri: string;
 }
 
 const config: Config = {
@@ -28,6 +29,8 @@ const config: Config = {
     redirectUri: process.env.GOOGLE_REDIRECT_URI || '',
   },
   jwtSecret: process.env.JWT_SECRET || 'verysecretkey',
+  frontendRedirectUri:
+    process.env.FRONTEND_REDIRECT_URI || 'http://localhost:5173',
 };
 
 export default config;

@@ -34,6 +34,6 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
       httpOnly: true,
       secure: config.nodeEnv === 'production',
     });
-    response.redirect('/');
+    response.redirect(config.frontendRedirectUri);
   },
 );
