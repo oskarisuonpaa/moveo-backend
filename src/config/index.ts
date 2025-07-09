@@ -12,6 +12,7 @@ interface Config {
     clientSecret: string;
     redirectUri: string;
   };
+  jwtSecret: string;
 }
 
 const config: Config = {
@@ -26,6 +27,7 @@ const config: Config = {
     clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     redirectUri: process.env.GOOGLE_REDIRECT_URI || '',
   },
+  jwtSecret: process.env.JWT_SECRET || 'verysecretkey',
 };
 
 export default config;
