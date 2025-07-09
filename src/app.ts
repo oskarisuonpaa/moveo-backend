@@ -24,7 +24,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 app.use('/api/calendars', authenticateJWT, calendarRouter);
 app.use('/api/events', authenticateJWT, eventsRouter);
 app.use('/api/events/attendees', authenticateJWT, attendeesRouter);
-app.use('/api/auth', authRouter);
+app.use('/auth', authRouter);
 
 //Temp
 app.post('/logout', (_req, res) => {
