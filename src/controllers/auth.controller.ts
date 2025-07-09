@@ -21,6 +21,7 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
 
     // Here you would typically create or update the user in your database
 
+    // Placeholder jwt token generation
     const token = jwt.sign(
       {
         userId: googleUser.googleId,

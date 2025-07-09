@@ -13,7 +13,9 @@
       "@services/*": ["services/*"],
       "@utils/*": ["utils/*"],
       "@config": ["config"],
-      "@models/*": ["models/*"]
+      "@models/*": ["models/*"],
+      "@middleware/*": ["middleware/*"],
+      "@routes/*": ["routes/*"]
     }
   }
 }

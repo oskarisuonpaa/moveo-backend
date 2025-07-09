@@ -29,6 +29,7 @@ class GoogleOAuthService {
       idToken: tokens.id_token!,
       audience: config.google.clientId,
     });
+
     const payload = ticket.getPayload();
     if (!payload) throw new AppError('Invalid Google ID token');
 
@@ -39,6 +40,16 @@ class GoogleOAuthService {
       picture: payload.picture,
       tokens,
     };
+  }
+
+  async refreshTokens() {
+    if (!this.client.credentials.refresh_token) {
+      throw new AppError('No refresh token available', 400);
+    }
+
+    const { credentials } = await this.client.refreshAccessToken();
+    this.client.setCredentials(credentials);
+    return credentials;
   }
 }
 
