@@ -25,6 +25,8 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
     const token = jwt.sign(
       {
         userId: googleUser.googleId,
+        email: googleUser.email,
+        name: googleUser.displayName,
       },
       config.jwtSecret,
       { expiresIn: '1h' },
