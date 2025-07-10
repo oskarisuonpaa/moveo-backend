@@ -16,7 +16,12 @@ class GoogleOAuthService {
   generateAuthUrl(): string {
     return this.client.generateAuthUrl({
       access_type: 'offline',
-      scope: ['openid', 'profile', 'email'],
+      scope: [
+        'openid',
+        'profile',
+        'email',
+        'https://www.googleapis.com/auth/calendar.events',
+      ],
       prompt: 'consent',
     });
   }

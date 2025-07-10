@@ -5,24 +5,24 @@ import { OAuth2Client } from 'google-auth-library';
 export const listCalendarEvents = async (
   calendarId: string,
 ): Promise<calendar_v3.Schema$Event[]> => {
-  const response = await serviceCalendar.events.list({
+  const { data: eventList } = await serviceCalendar.events.list({
     calendarId,
     timeMin: new Date().toISOString(),
     singleEvents: true,
     orderBy: 'startTime',
   });
-  return response.data.items ?? [];
+  return eventList.items ?? [];
 };
 
 export const singleCalendarEvent = async (
   calendarId: string,
   eventId: string,
 ): Promise<calendar_v3.Schema$Event | null> => {
-  const response = await serviceCalendar.events.get({
+  const { data: event } = await serviceCalendar.events.get({
     calendarId,
     eventId,
   });
-  return response.data || null;
+  return event || null;
 };
 
 export const createCalendarEvent = async (
@@ -75,26 +75,39 @@ export const removeCalendarEvent = async (
 export const getCalendarList = async (): Promise<
   calendar_v3.Schema$CalendarListEntry[]
 > => {
-  const response = await serviceCalendar.calendarList.list();
-  return response.data.items ?? [];
+  const { data: calendarList } = await serviceCalendar.calendarList.list();
+  return calendarList.items ?? [];
 };
 
 export const getCalendar = async (
   calendarId: string,
 ): Promise<calendar_v3.Schema$Calendar | null> => {
-  const response = await serviceCalendar.calendars.get({
+  const { data: calendar } = await serviceCalendar.calendars.get({
     calendarId,
   });
-  return response.data || null;
+  return calendar || null;
 };
 
 export const createCalendar = async (
   calendarData: calendar_v3.Schema$Calendar,
 ): Promise<calendar_v3.Schema$Calendar> => {
-  const response = await serviceCalendar.calendars.insert({
+  const { data: calendar } = await serviceCalendar.calendars.insert({
     requestBody: calendarData,
   });
-  return response.data;
+
+  const calendarId = calendar.id!;
+
+  await serviceCalendar.acl.insert({
+    calendarId,
+    requestBody: {
+      role: 'writer',
+      scope: {
+        type: 'default',
+      },
+    },
+  });
+
+  return calendar;
 };
 
 export const removeCalendar = async (calendarId: string): Promise<void> => {
