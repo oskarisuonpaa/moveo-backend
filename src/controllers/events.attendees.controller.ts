@@ -8,7 +8,7 @@ import { asyncHandler } from '@utils/asyncHandler';
 
 declare module 'express-serve-static-core' {
   interface Request {
-    user: { id: number; email: string };
+    user: { id: string; email: string };
   }
 }
 

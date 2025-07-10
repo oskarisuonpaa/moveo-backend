@@ -20,5 +20,5 @@ export default class User {
   refreshToken!: string | null;
 
   @Column({ type: 'bigint', nullable: true })
-  expiryDate!: number | null;
+  tokenExpiryDate!: number | null;
 }

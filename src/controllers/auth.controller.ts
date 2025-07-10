@@ -32,7 +32,7 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
         name: googleUser.displayName,
         accessToken: googleUser.tokens.access_token,
         refreshToken: googleUser.tokens.refresh_token,
-        expiryDate: googleUser.tokens.expiry_date,
+        tokenExpiryDate: googleUser.tokens.expiry_date,
       });
       await repository.save(user);
     }

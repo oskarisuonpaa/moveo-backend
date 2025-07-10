@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import errorHandler from '@middleware/error.middleware';
-import { authenticateJWT } from '@middleware/auth.middleware';
+import authenticateJWT from '@middleware/authenticateJWT.middleware';
 import calendarRouter from '@routes/calendar.routes';
 import eventsRouter from '@routes/events.routes';
 import attendeesRouter from '@routes/events.attendees.routes';
@@ -10,6 +10,7 @@ import authRouter from '@routes/auth.routes';
 import logger from '@utils/logger';
 import { AppError } from '@utils/errors';
 import config from '@config';
+import attachGoogleClient from '@middleware/attachGoogleClient.middleware';
 
 const app = express();
 
@@ -21,10 +22,14 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   next();
 });
 
-app.use('/api/calendars', authenticateJWT, calendarRouter);
-app.use('/api/events', authenticateJWT, eventsRouter);
-app.use('/api/events', authenticateJWT, attendeesRouter);
 app.use('/auth', authRouter);
+
+app.use(authenticateJWT);
+app.use(attachGoogleClient);
+
+app.use('/api/calendars', calendarRouter);
+app.use('/api/events', eventsRouter);
+app.use('/api/events', attendeesRouter);
 
 //Temp
 app.post('/logout', (_req, res) => {
