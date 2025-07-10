@@ -3,8 +3,11 @@ import jwt from 'jsonwebtoken';
 import config from '../config';
 import { unauthorized } from '@utils/errors';
 
-export interface AuthRequest extends Request {
-  userId?: number;
+export interface AuthRequest extends Omit<Request, 'user'> {
+  user?: {
+    id: number;
+    email: string;
+  };
 }
 
 export const authenticateJWT = (
@@ -26,7 +29,10 @@ export const authenticateJWT = (
       decoded !== null &&
       'userId' in decoded
     ) {
-      request.userId = (decoded as { userId: number }).userId;
+      request.user = {
+        id: (decoded as { userId: number }).userId,
+        email: (decoded as { email: string }).email,
+      };
       return next();
     }
     next(unauthorized('Invalid token payload'));

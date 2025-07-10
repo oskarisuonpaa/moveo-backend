@@ -1,5 +1,4 @@
 import { RequestHandler } from 'express';
-import { badRequest } from '@utils/errors';
 import { successResponse } from '@utils/responses';
 import {
   addAttendeeToEvent,
@@ -7,25 +6,28 @@ import {
 } from '@services/events/events.attendees.service';
 import { asyncHandler } from '@utils/asyncHandler';
 
-export const attendEvent: RequestHandler = asyncHandler(async (req, res) => {
-  const { alias, eventId } = req.params;
-  const { email } = req.body as { email: string };
-
-  if (!email || typeof email !== 'string') {
-    badRequest('A valid email is required');
+declare module 'express-serve-static-core' {
+  interface Request {
+    user: { id: number; email: string };
   }
+}
 
-  await addAttendeeToEvent(alias, eventId, email);
-  successResponse(res, null, 200);
-});
+export const attendEvent: RequestHandler = asyncHandler(
+  async (request, response) => {
+    const { alias, eventId } = request.params;
+    const email: string = request.user.email;
 
-export const unattendEvent: RequestHandler = asyncHandler(async (req, res) => {
-  const { alias, eventId, email } = req.params;
+    await addAttendeeToEvent(alias, eventId, email);
+    successResponse(response, null, 200);
+  },
+);
 
-  if (!email || typeof email !== 'string') {
-    badRequest('A valid email is required');
-  }
+export const unattendEvent: RequestHandler = asyncHandler(
+  async (request, response) => {
+    const { alias, eventId } = request.params;
+    const email: string = request.user.email;
 
-  await removeAttendeeFromEvent(alias, eventId, email);
-  successResponse(res, null, 200);
-});
+    await removeAttendeeFromEvent(alias, eventId, email);
+    successResponse(response, null, 200);
+  },
+);
