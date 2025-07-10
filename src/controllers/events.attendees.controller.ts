@@ -15,9 +15,9 @@ declare module 'express-serve-static-core' {
 export const attendEvent: RequestHandler = asyncHandler(
   async (request, response) => {
     const { alias, eventId } = request.params;
-    const email: string = request.user.email;
+    const { googleClient } = request;
 
-    await addAttendeeToEvent(alias, eventId, email);
+    await addAttendeeToEvent(alias, eventId, googleClient);
     successResponse(response, null, 200);
   },
 );
@@ -25,9 +25,9 @@ export const attendEvent: RequestHandler = asyncHandler(
 export const unattendEvent: RequestHandler = asyncHandler(
   async (request, response) => {
     const { alias, eventId } = request.params;
-    const email: string = request.user.email;
+    const { googleClient } = request;
 
-    await removeAttendeeFromEvent(alias, eventId, email);
+    await removeAttendeeFromEvent(alias, eventId, googleClient);
     successResponse(response, null, 200);
   },
 );

@@ -1,5 +1,6 @@
-import { calendar_v3 } from 'googleapis';
+import { calendar_v3, google } from 'googleapis';
 import { serviceCalendar } from './googleServiceClient';
+import { OAuth2Client } from 'google-auth-library';
 
 export const listCalendarEvents = async (
   calendarId: string,
@@ -49,25 +50,15 @@ export const updateCalendarEvent = async (
 export const patchCalendarEvent = async (
   calendarId: string,
   eventId: string,
-  event: Partial<calendar_v3.Schema$Event>,
+  googleClient: OAuth2Client,
+  attendees: calendar_v3.Schema$EventAttendee[],
 ): Promise<void> => {
-  /*
-  export const patchCalendarEvent = async (
-  userId: string,
-  calendarId: string,
-  eventId: string,
-  event: Partial<calendar_v3.Schema$Event>,
-): Promise<void> => {
-  await getUserCalendarClient(userId).events.patch({
+  const calendar = google.calendar({ version: 'v3', auth: googleClient });
+  await calendar.events.patch({
     calendarId,
     eventId,
-    requestBody: event,
-  });
-  */
-  await serviceCalendar.events.patch({
-    calendarId,
-    eventId,
-    requestBody: event,
+    sendUpdates: 'all',
+    requestBody: { attendees },
   });
 };
 

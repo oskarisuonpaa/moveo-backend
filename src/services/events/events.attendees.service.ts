@@ -5,11 +5,13 @@ import {
   invalidateCalendarEventsCache,
 } from './events.service';
 import { calendarAliasToId } from '@services/calendar/calendarCache.service';
+import { OAuth2Client } from 'google-auth-library';
 
 export const addAttendeeToEvent = async (
   alias: string,
   eventId: string,
   email: string,
+  googleClient: OAuth2Client,
 ): Promise<void> => {
   const event = await getCalendarEventById(alias, eventId);
 
@@ -27,9 +29,13 @@ export const addAttendeeToEvent = async (
   }
 
   const attendees = [...(event.attendees || []), { email }];
-  await patchCalendarEvent(await calendarAliasToId(alias), eventId, {
+
+  await patchCalendarEvent(
+    await calendarAliasToId(alias),
+    eventId,
+    googleClient,
     attendees,
-  });
+  );
 
   invalidateCalendarEventsCache(alias);
 };
@@ -38,13 +44,17 @@ export async function removeAttendeeFromEvent(
   alias: string,
   eventId: string,
   email: string,
+  googleClient: OAuth2Client,
 ) {
   const event = await getCalendarEventById(alias, eventId);
   const attendees = event.attendees?.filter((a) => a.email !== email) ?? [];
 
-  await patchCalendarEvent(await calendarAliasToId(alias), eventId, {
+  await patchCalendarEvent(
+    await calendarAliasToId(alias),
+    eventId,
+    googleClient,
     attendees,
-  });
+  );
 
   invalidateCalendarEventsCache(alias);
 }
