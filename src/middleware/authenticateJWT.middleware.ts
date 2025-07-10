@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import config from '../config';
 import { unauthorized } from '@utils/errors';
 
-const authenticateJWT: RequestHandler = (request, response, next) => {
+const authenticateJWT: RequestHandler = (request, _response, next) => {
   const token =
     (request.cookies as { token?: string }).token ||
     request.headers.authorization?.split(' ')[1];

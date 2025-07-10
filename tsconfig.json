@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "es2016",
+    "module": "commonjs",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -17,6 +17,10 @@
       "@middleware/*": ["middleware/*"],
       "@routes/*": ["routes/*"],
       "@controllers/*": ["controllers/*"]
-    }
-  }
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+  "files": ["src/types/express-serve-static-core.d.ts"],
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -5,19 +5,15 @@ import {
   removeAttendeeFromEvent,
 } from '@services/events/events.attendees.service';
 import { asyncHandler } from '@utils/asyncHandler';
-
-declare module 'express-serve-static-core' {
-  interface Request {
-    user: { id: string; email: string };
-  }
-}
+import { OAuth2Client } from 'google-auth-library';
 
 export const attendEvent: RequestHandler = asyncHandler(
   async (request, response) => {
     const { alias, eventId } = request.params;
-    const { googleClient } = request;
+    const googleClient = request.googleClient as OAuth2Client;
+    const { email } = request.user as { email: string };
 
-    await addAttendeeToEvent(alias, eventId, googleClient);
+    await addAttendeeToEvent(alias, eventId, email, googleClient);
     successResponse(response, null, 200);
   },
 );
@@ -25,9 +21,10 @@ export const attendEvent: RequestHandler = asyncHandler(
 export const unattendEvent: RequestHandler = asyncHandler(
   async (request, response) => {
     const { alias, eventId } = request.params;
-    const { googleClient } = request;
+    const googleClient = request.googleClient as OAuth2Client;
+    const { email } = request.user as { email: string };
 
-    await removeAttendeeFromEvent(alias, eventId, googleClient);
+    await removeAttendeeFromEvent(alias, eventId, email, googleClient);
     successResponse(response, null, 200);
   },
 );

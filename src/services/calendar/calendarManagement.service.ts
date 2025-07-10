@@ -1,5 +1,5 @@
 import { AppDataSource } from '../../database/data-source';
-import { Calendar } from '@models/calendar.model';
+import Calendar from '@models/calendar.model';
 import { AppError } from '@utils/errors';
 import { invalidateCalendarSummariesCache } from './calendar.service';
 import { invalidateCalendarAliasCache } from './calendarCache.service';
