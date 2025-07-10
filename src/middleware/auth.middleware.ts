@@ -5,7 +5,7 @@ import { unauthorized } from '@utils/errors';
 
 export interface AuthRequest extends Omit<Request, 'user'> {
   user?: {
-    id: number;
+    id: string;
     email: string;
   };
 }
@@ -27,15 +27,16 @@ export const authenticateJWT = (
     if (
       typeof decoded === 'object' &&
       decoded !== null &&
-      'userId' in decoded
+      'userId' in decoded &&
+      'email' in decoded
     ) {
       request.user = {
-        id: (decoded as { userId: number }).userId,
+        id: (decoded as { userId: string }).userId,
         email: (decoded as { email: string }).email,
       };
       return next();
     }
-    next(unauthorized('Invalid token payload'));
+    return next(unauthorized('Invalid token payload'));
   } catch {
     return next(unauthorized('Invalid or expired token'));
   }
