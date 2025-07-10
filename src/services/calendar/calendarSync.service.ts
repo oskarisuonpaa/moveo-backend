@@ -1,6 +1,6 @@
 import * as googleCalendar from '@services/google/googleCalendar.service';
 import { AppDataSource } from '../../database/data-source';
-import { Calendar } from '@models/calendar.model';
+import Calendar from '@models/calendar.model';
 import { invalidateCalendarAliasCache } from './calendarCache.service';
 import { invalidateCalendarSummariesCache } from './calendar.service';
 

@@ -1,14 +1,15 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { Calendar } from '@models/calendar.model';
+import Calendar from '@models/calendar.model';
 import config from '@config';
 import logger from '@utils/logger';
 import { syncGoogleCalendarsToDb } from '@services/calendar/calendarSync.service';
+import User from '@models/user.model';
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
   database: config.database,
-  entities: [Calendar],
+  entities: [Calendar, User],
   synchronize: true,
   logging: false,
 });

@@ -2,6 +2,7 @@ import config from '@config';
 import googleOAuthService from '@services/google/googleOAuth.service';
 import { asyncHandler } from '@utils/asyncHandler';
 import { badRequest } from '@utils/errors';
+import { AppDataSource } from 'database/data-source';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -19,14 +20,26 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
 
     const googleUser = await googleOAuthService.getUser(code as string);
 
-    // Here you would typically create or update the user in your database
+    const repository = AppDataSource.getRepository('User');
+    let user = await repository.findOne({
+      where: { googleId: googleUser.googleId },
+    });
 
-    // Placeholder jwt token generation
-    const token = jwt.sign(
-      {
-        userId: googleUser.googleId,
+    if (!user) {
+      user = repository.create({
+        googleId: googleUser.googleId,
         email: googleUser.email,
         name: googleUser.displayName,
+        accessToken: googleUser.tokens.access_token,
+        refreshToken: googleUser.tokens.refresh_token,
+        expiryDate: googleUser.tokens.expiry_date,
+      });
+      await repository.save(user);
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user.id as number,
       },
       config.jwtSecret,
       { expiresIn: '1h' },

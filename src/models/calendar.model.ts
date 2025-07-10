@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'calendar' })
-export class Calendar {
+@Entity({ name: 'calendars' })
+export default class Calendar {
   @PrimaryGeneratedColumn()
   id!: number;
 
