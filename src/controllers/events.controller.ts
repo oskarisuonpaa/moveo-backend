@@ -8,7 +8,7 @@ import { createAndSyncCalendarEvent } from '@services/events/eventManagement.ser
 import sanitizeGoogleCalendarEventFormat from '@utils/sanitizeGoogleCalendarEventFormat';
 import { successResponse } from '@utils/responses';
 import { asyncHandler } from '@utils/asyncHandler';
-import { AppError } from '@utils/errors';
+import { badRequest } from '@utils/errors';
 
 export const getCalendarEvents: RequestHandler = asyncHandler(
   async (request, response) => {
@@ -44,7 +44,7 @@ export const postCalendarEvent: RequestHandler = asyncHandler(
       };
 
     if (!alias || typeof alias !== 'string') {
-      throw new AppError('Invalid calendar alias', 400);
+      badRequest('Invalid calendar alias');
     }
 
     if (
@@ -53,7 +53,7 @@ export const postCalendarEvent: RequestHandler = asyncHandler(
       typeof start !== 'string' ||
       typeof end !== 'string'
     ) {
-      throw new AppError('Invalid event dates', 400);
+      badRequest('Invalid event dates');
     }
 
     const event: calendar_v3.Schema$Event = {

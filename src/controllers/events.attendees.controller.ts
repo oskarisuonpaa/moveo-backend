@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { AppError } from '@utils/errors';
+import { badRequest } from '@utils/errors';
 import { successResponse } from '@utils/responses';
 import {
   addAttendeeToEvent,
@@ -12,7 +12,7 @@ export const attendEvent: RequestHandler = asyncHandler(async (req, res) => {
   const { email } = req.body as { email: string };
 
   if (!email || typeof email !== 'string') {
-    throw new AppError('A valid email is required', 400);
+    badRequest('A valid email is required');
   }
 
   await addAttendeeToEvent(alias, eventId, email);
@@ -23,7 +23,7 @@ export const unattendEvent: RequestHandler = asyncHandler(async (req, res) => {
   const { alias, eventId, email } = req.params;
 
   if (!email || typeof email !== 'string') {
-    throw new AppError('A valid email is required', 400);
+    badRequest('A valid email is required');
   }
 
   await removeAttendeeFromEvent(alias, eventId, email);

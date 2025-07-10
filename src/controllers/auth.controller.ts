@@ -1,7 +1,7 @@
 import config from '@config';
 import googleOAuthService from '@services/google/googleOAuth.service';
 import { asyncHandler } from '@utils/asyncHandler';
-import { AppError } from '@utils/errors';
+import { badRequest } from '@utils/errors';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -14,10 +14,10 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
   async (request, response) => {
     const { code } = request.query as { code?: string };
     if (!code) {
-      throw new AppError('No code returned from Google', 400);
+      badRequest('No code returned from Google');
     }
 
-    const googleUser = await googleOAuthService.getUser(code);
+    const googleUser = await googleOAuthService.getUser(code as string);
 
     // Here you would typically create or update the user in your database
 
