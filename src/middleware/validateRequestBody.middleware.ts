@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RequestHandler } from 'express';
-import { AppError } from './error.middleware';
+import { badRequest } from '@utils/errors';
 
 const nonEmptyObject = z
   .record(z.unknown())
@@ -8,17 +8,12 @@ const nonEmptyObject = z
     message: 'Request body cannot be empty',
   });
 
-export const requireRequestBody: RequestHandler = (
-  request,
-  _response,
-  next,
-) => {
+const requireRequestBody: RequestHandler = (request, _response, next) => {
   const result = nonEmptyObject.safeParse(request.body);
   if (!result.success) {
-    const error = new Error('Invalid request body') as AppError;
-    error.status = 400;
-    return next(error);
+    return next(badRequest('Invalid request body'));
   }
-
   next();
 };
+
+export default requireRequestBody;

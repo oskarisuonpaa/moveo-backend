@@ -1,18 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
-import { AppError } from './error.middleware';
+import { badRequest } from '@utils/errors';
 
-export const requireEventId = (
+const requireEventId = (
   request: Request,
   _response: Response,
   next: NextFunction,
 ) => {
   const { eventId } = request.params;
-
   if (!eventId || typeof eventId !== 'string') {
-    const error = new Error('Invalid event ID') as AppError;
-    error.status = 400;
-    return next(error);
+    return next(badRequest('Invalid event ID'));
   }
-
   next();
 };
+
+export default requireEventId;

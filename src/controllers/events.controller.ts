@@ -43,10 +43,6 @@ export const postCalendarEvent: RequestHandler = asyncHandler(
         maxAttendees?: number;
       };
 
-    if (!alias || typeof alias !== 'string') {
-      badRequest('Invalid calendar alias');
-    }
-
     if (
       !start ||
       !end ||

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../config';
-import { AppError } from '@utils/errors';
+import { unauthorized } from '@utils/errors';
 
 export interface AuthRequest extends Request {
   userId?: number;
@@ -16,7 +16,7 @@ export const authenticateJWT = (
     (request.cookies as { token?: string }).token ||
     request.headers.authorization?.split(' ')[1];
   if (!token) {
-    return next(new AppError('Authentication token is missing', 401));
+    return next(unauthorized('Authentication token is missing'));
   }
 
   try {
@@ -29,8 +29,8 @@ export const authenticateJWT = (
       request.userId = (decoded as { userId: number }).userId;
       return next();
     }
-    next(new AppError('Invalid token payload', 401));
+    next(unauthorized('Invalid token payload'));
   } catch {
-    return next(new AppError('Invalid or expired token', 401));
+    return next(unauthorized('Invalid or expired token'));
   }
 };
