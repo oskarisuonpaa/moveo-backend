@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
-import { logger } from '../utils/logger';
-import { errorResponse } from '../utils/responses';
+import logger from '@utils/logger';
+import { errorResponse } from '@utils/responses';
 
 export interface AppError extends Error {
   status?: number;
 }
 
-export default function errorHandler(
+const errorHandler = (
   error: AppError,
   req: Request,
   res: Response,
   _next: NextFunction,
-) {
+) => {
   const statusCode = error.status ?? 500;
 
   logger.error(
@@ -22,4 +22,6 @@ export default function errorHandler(
   );
 
   errorResponse(res, error);
-}
+};
+
+export default errorHandler;

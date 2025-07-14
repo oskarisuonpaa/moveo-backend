@@ -1,45 +1,34 @@
-import { calendar_v3, google } from 'googleapis';
-import config from '../config';
-import path from 'path';
-
-const auth = new google.auth.GoogleAuth({
-  keyFile: path.join(__dirname, config.serviceAccount),
-  scopes: ['https://www.googleapis.com/auth/calendar'],
-});
-
-export const calendar = google.calendar({
-  version: 'v3',
-  auth,
-});
+import { calendar_v3 } from 'googleapis';
+import { serviceCalendar } from './googleServiceClient';
 
 export const listCalendarEvents = async (
   calendarId: string,
 ): Promise<calendar_v3.Schema$Event[]> => {
-  const response = await calendar.events.list({
+  const { data: eventList } = await serviceCalendar.events.list({
     calendarId,
     timeMin: new Date().toISOString(),
     singleEvents: true,
     orderBy: 'startTime',
   });
-  return response.data.items ?? [];
+  return eventList.items ?? [];
 };
 
 export const singleCalendarEvent = async (
   calendarId: string,
   eventId: string,
 ): Promise<calendar_v3.Schema$Event | null> => {
-  const response = await calendar.events.get({
+  const { data: event } = await serviceCalendar.events.get({
     calendarId,
     eventId,
   });
-  return response.data || null;
+  return event || null;
 };
 
 export const createCalendarEvent = async (
   calendarId: string,
   event: calendar_v3.Schema$Event,
 ): Promise<void> => {
-  await calendar.events.insert({
+  await serviceCalendar.events.insert({
     calendarId,
     requestBody: event,
   });
@@ -50,10 +39,24 @@ export const updateCalendarEvent = async (
   eventId: string,
   event: calendar_v3.Schema$Event,
 ): Promise<void> => {
-  await calendar.events.update({
+  await serviceCalendar.events.update({
     calendarId,
     eventId,
     requestBody: event,
+  });
+};
+
+export const patchCalendarEvent = async (
+  calendarId: string,
+  eventId: string,
+  attendees: string[],
+): Promise<void> => {
+  await serviceCalendar.events.patch({
+    calendarId,
+    eventId,
+    requestBody: {
+      extendedProperties: { private: { attendees: attendees.join(';') } },
+    },
   });
 };
 
@@ -61,7 +64,7 @@ export const removeCalendarEvent = async (
   calendarId: string,
   eventId: string,
 ): Promise<void> => {
-  await calendar.events.delete({
+  await serviceCalendar.events.delete({
     calendarId,
     eventId,
   });
@@ -70,30 +73,31 @@ export const removeCalendarEvent = async (
 export const getCalendarList = async (): Promise<
   calendar_v3.Schema$CalendarListEntry[]
 > => {
-  const response = await calendar.calendarList.list();
-  return response.data.items ?? [];
+  const { data: calendarList } = await serviceCalendar.calendarList.list();
+  return calendarList.items ?? [];
 };
 
 export const getCalendar = async (
   calendarId: string,
 ): Promise<calendar_v3.Schema$Calendar | null> => {
-  const response = await calendar.calendars.get({
+  const { data: calendar } = await serviceCalendar.calendars.get({
     calendarId,
   });
-  return response.data || null;
+  return calendar || null;
 };
 
 export const createCalendar = async (
   calendarData: calendar_v3.Schema$Calendar,
 ): Promise<calendar_v3.Schema$Calendar> => {
-  const response = await calendar.calendars.insert({
+  const { data: calendar } = await serviceCalendar.calendars.insert({
     requestBody: calendarData,
   });
-  return response.data;
+
+  return calendar;
 };
 
 export const removeCalendar = async (calendarId: string): Promise<void> => {
-  await calendar.calendars.delete({
+  await serviceCalendar.calendars.delete({
     calendarId,
   });
 };
