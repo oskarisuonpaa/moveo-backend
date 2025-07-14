@@ -61,6 +61,7 @@ export const postCalendarEvent: RequestHandler = asyncHandler(
       extendedProperties: {
         private: {
           maxAttendees: maxAttendees ? String(maxAttendees) : '',
+          attendees: '',
         },
       },
     };

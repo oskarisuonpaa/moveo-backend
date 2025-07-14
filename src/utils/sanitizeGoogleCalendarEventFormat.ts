@@ -9,11 +9,7 @@ const sanitizeGoogleCalendarEventFormat = (event: calendar_v3.Schema$Event) => {
     end: event.end?.dateTime,
     location: event.location || 'No Location',
     maxAttendees: event.extendedProperties?.private?.maxAttendees || 'No limit',
-    attendees:
-      event.attendees?.map((attendee) => ({
-        email: attendee.email,
-        responseStatus: attendee.responseStatus,
-      })) || [],
+    attendees: event.extendedProperties?.private?.attendees || [],
   };
 
   return sanitizedEvent;

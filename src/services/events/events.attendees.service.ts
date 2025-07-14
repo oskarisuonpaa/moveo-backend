@@ -5,47 +5,13 @@ import {
   invalidateCalendarEventsCache,
 } from './events.service';
 import { calendarAliasToId } from '@services/calendar/calendarCache.service';
-import { OAuth2Client } from 'google-auth-library';
-import { google } from 'googleapis';
-
-const ensureUserHasCalendar = async (
-  calendarId: string,
-  authClient: OAuth2Client,
-) => {
-  const calendar = google.calendar({ version: 'v3', auth: authClient });
-
-  try {
-    await calendar.calendarList.get({ calendarId });
-  } catch (error) {
-    if (
-      error &&
-      typeof error === 'object' &&
-      'code' in error &&
-      (error as { code: number }).code === 404
-    ) {
-      await calendar.calendarList.insert({
-        requestBody: { id: calendarId },
-      });
-      return;
-    }
-    throw error;
-  }
-
-  return calendarId;
-};
 
 export const addAttendeeToEvent = async (
   alias: string,
   eventId: string,
   email: string,
-  googleClient: OAuth2Client,
 ): Promise<void> => {
   const calendarId = await calendarAliasToId(alias);
-
-  await ensureUserHasCalendar(calendarId, googleClient);
-
-  const calendarAsUser = google.calendar({ version: 'v3', auth: googleClient });
-  await calendarAsUser.events.get({ calendarId, eventId });
 
   const event = await getCalendarEventById(alias, eventId);
 
@@ -63,8 +29,9 @@ export const addAttendeeToEvent = async (
   }
 
   const attendees = [...(event.attendees || []), { email }];
+  const attendeeEmails = attendees.map((attendee) => attendee.email ?? '');
 
-  await patchCalendarEvent(calendarId, eventId, googleClient, attendees);
+  await patchCalendarEvent(calendarId, eventId, attendeeEmails);
 
   invalidateCalendarEventsCache(alias);
 };
@@ -73,19 +40,19 @@ export async function removeAttendeeFromEvent(
   alias: string,
   eventId: string,
   email: string,
-  googleClient: OAuth2Client,
 ) {
   const calendarId = await calendarAliasToId(alias);
 
-  await ensureUserHasCalendar(calendarId, googleClient);
-
-  const calendarAsUser = google.calendar({ version: 'v3', auth: googleClient });
-  await calendarAsUser.events.get({ calendarId, eventId });
-
   const event = await getCalendarEventById(alias, eventId);
-  const attendees = event.attendees?.filter((a) => a.email !== email) ?? [];
+  const attendees = event.extendedProperties?.private?.attendees;
 
-  await patchCalendarEvent(calendarId, eventId, googleClient, attendees);
+  const parsedAttendees = attendees
+    ? attendees.split(';').filter((attendee) => attendee !== email)
+    : [];
+
+  const attendeeEmails = parsedAttendees.map((attendee) => attendee ?? '');
+
+  await patchCalendarEvent(calendarId, eventId, attendeeEmails);
 
   invalidateCalendarEventsCache(alias);
 }
