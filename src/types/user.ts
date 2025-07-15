@@ -6,7 +6,7 @@ export interface User {
   lastname?: string;
   role?: string;
   product_name?: string;
-  product_type?: string;
+  product_code?: string;
   study_location?: string;
   membership_start?: string;
   membership_end?: string;

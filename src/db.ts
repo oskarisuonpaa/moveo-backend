@@ -12,7 +12,7 @@ db.serialize(() => {
     lastname TEXT,
     role TEXT,
     product_name TEXT,
-    product_type TEXT,
+    product_code TEXT,
     study_location TEXT,
     membership_start DATE,
     membership_end DATE,
@@ -38,19 +38,19 @@ db.serialize(() => {
     shop_email TEXT NOT NULL,
     firstname TEXT NOT NULL,
     lastname TEXT NOT NULL,
-    product_type TEXT NOT NULL,
+    product_code TEXT NOT NULL,
     study_location TEXT NOT NULL,
     purchase_date DATE NOT NULL
     )
     `);
     // store product data
     // product_name: long name
-    // product_type: SKU code
+    // product_code: SKU code
   db.run(`
     CREATE TABLE IF NOT EXISTS products (
       product_id INTEGER PRIMARY KEY AUTOINCREMENT,
       product_name TEXT NOT NULL,
-      product_type TEXT NOT NULL,
+      product_code TEXT NOT NULL,
       product_start DATE,
       product_end DATE NOT NULL
     )
