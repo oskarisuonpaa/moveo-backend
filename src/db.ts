@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./moveoapp.sqlite');
 
 db.serialize(() => {
-    // store user info used in the app
+  // store user info used in the app
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,9 +43,9 @@ db.serialize(() => {
     purchase_date DATE NOT NULL
     )
     `);
-    // store product data
-    // product_name: long name
-    // product_code: SKU code
+  // store product data
+  // product_name: long name
+  // product_code: SKU code
   db.run(`
     CREATE TABLE IF NOT EXISTS products (
       product_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,6 +55,17 @@ db.serialize(() => {
       product_end DATE NOT NULL
     )
   `);
+  // store pending shop emails for verification
+  db.run(`
+  CREATE TABLE IF NOT EXISTS pending_shop_emails (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  shop_email TEXT NOT NULL,
+  verification_token TEXT NOT NULL,
+  created_at DATE DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id)
+  )
+`);
 });
 
 export default db;

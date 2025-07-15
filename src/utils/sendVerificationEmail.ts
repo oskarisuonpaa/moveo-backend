@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-export async function sendVerificationEmail(email : string, token : string) {
+export async function sendVerificationEmail(email : string, token : string, url: string) {
   const transporter = nodemailer.createTransport({
     // configure email provider
     service: 'gmail',
@@ -11,7 +11,7 @@ export async function sendVerificationEmail(email : string, token : string) {
     }
   });
 
-  const verificationUrl = `http://localhost:3001/verification/verify?token=${token}`;
+  const verificationUrl = `${url}?token=${token}`;
 
   await transporter.sendMail({
     from: '"MoveoApp" <' + (process.env.MOVEO_EMAIL || '') + '>',
