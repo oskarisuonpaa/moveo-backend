@@ -11,7 +11,7 @@ export async function sendVerificationEmail(email : string, token : string) {
     }
   });
 
-  const verificationUrl = `http://localhost:3001/auth/verify?token=${token}`;
+  const verificationUrl = `http://localhost:3001/verification/verify?token=${token}`;
 
   await transporter.sendMail({
     from: '"MoveoApp" <' + (process.env.MOVEO_EMAIL || '') + '>',
