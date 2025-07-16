@@ -11,6 +11,7 @@ import logger from '@utils/logger';
 import { AppError } from '@utils/errors';
 import config from '@config';
 import attachGoogleClient from '@middleware/attachGoogleClient.middleware';
+import verificationRouter from '@routes/verification.routes';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use(attachGoogleClient);
 app.use('/api/calendars', calendarRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api/events', attendeesRouter);
+app.use('/verification', verificationRouter);
 
 //Temp
 app.post('/logout', (_req, res) => {
