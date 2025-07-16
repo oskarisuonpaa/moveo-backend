@@ -68,26 +68,16 @@ Successful response:
 {
   "data": [
     {
-      "id": "5idiqrluhkf4bg1fsgfbc609ho",
-      "title": "test",
-      "description": "No Description",
-      "start": "2025-07-07T12:00:00+03:00",
-      "end": "2025-07-07T13:00:00+03:00"
+      "id": "0h1qu23jor0ubl49pndtiuv2t4",
+      "title": "Otsikko1",
+      "description": "Kuvaus",
+      "start": "2025-07-17T17:00:00+03:00",
+      "end": "2025-07-17T18:00:00+03:00",
+      "location": "Niemenkatu 73, 15140 Lahti",
+      "maxAttendees": "10",
+      "attendees": [...]
     },
-    {
-      "id": "ingh1o5cmgf0mhjccc7u653jak",
-      "title": "test1",
-      "description": "No Description",
-      "start": "2025-07-07T12:00:00+03:00",
-      "end": "2025-07-07T13:00:00+03:00"
-    },
-    {
-      "id": "n7ng8ht7bbg6o3g5s00t46b62s",
-      "title": "test2",
-      "description": "test2",
-      "start": "2025-07-07T12:00:00+03:00",
-      "end": "2025-07-07T13:00:00+03:00"
-    }
+    ...
   ]
 }
 ```
@@ -100,18 +90,16 @@ Successful response:
 
 ```json
 {
-  "data": [
-    {
-      "id": "0h1qu23jor0ubl49pndtiuv2t4",
-      "title": "Otsikko1",
-      "description": "Kuvaus",
-      "start": "2025-07-17T17:00:00+03:00",
-      "end": "2025-07-17T18:00:00+03:00",
-      "location": "Niemenkatu 73, 15140 Lahti",
-      "maxAttendees": "10",
-      "attendees": [""]
-    }
-  ]
+  "data": {
+    "id": "0h1qu23jor0ubl49pndtiuv2t4",
+    "title": "Otsikko1",
+    "description": "Kuvaus",
+    "start": "2025-07-17T17:00:00+03:00",
+    "end": "2025-07-17T18:00:00+03:00",
+    "location": "Niemenkatu 73, 15140 Lahti",
+    "maxAttendees": "10",
+    "attendees": [...]
+  }
 }
 ```
 
