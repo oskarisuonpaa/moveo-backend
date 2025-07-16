@@ -54,6 +54,8 @@ Successful response:
 
 Deletes a calendar by alias.
 
+Successful response: **204**.
+
 ### /api/events
 
 #### GET /:alias
@@ -98,13 +100,18 @@ Successful response:
 
 ```json
 {
-  "data": {
-    "id": "5idiqrluhkf4bg1fsgfbc609ho",
-    "title": "test",
-    "description": "No Description",
-    "start": "2025-07-07T12:00:00+03:00",
-    "end": "2025-07-07T13:00:00+03:00"
-  }
+  "data": [
+    {
+      "id": "0h1qu23jor0ubl49pndtiuv2t4",
+      "title": "Otsikko1",
+      "description": "Kuvaus",
+      "start": "2025-07-17T17:00:00+03:00",
+      "end": "2025-07-17T18:00:00+03:00",
+      "location": "Niemenkatu 73, 15140 Lahti",
+      "maxAttendees": "10",
+      "attendees": [""]
+    }
+  ]
 }
 ```
 
@@ -116,11 +123,21 @@ Request body:
 
 ```json
 {
-  "start": "2025-07-07T09:00:00.000Z",
-  "end": "2025-07-07T10:00:00.000Z",
-  "description": "test2",
-  "summary": "test2"
+  "start": "2025-07-17T14:00:00.000Z",
+  "end": "2025-07-17T15:00:00.000Z",
+  "description": "Kuvaus",
+  "summary": "Otsikko1",
+  "location": "Niemenkatu 73, 15140 Lahti",
+  "maxAttendees": 10
 }
 ```
 
 Successful response: **201**.
+
+#### POST /:alias/:eventId/attend
+
+Adds the authorized user as a attendee to the event.
+
+#### DELETE /:alias/:eventId/unattend
+
+Removes the authorized user from event attendees.
