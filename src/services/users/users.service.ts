@@ -108,6 +108,42 @@ export const linkShopEmailToUser = (
   });
 };
 
+export const updateUserInfoFromPurchase = (
+  userId: number,
+  purchaseData: {
+    firstname: string;
+    lastname: string;
+    product_code: string;
+    study_location: string;
+    membership_start: string;
+    membership_end: string;
+    product_name: string;
+  },
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    db.run(
+      'UPDATE users SET firstname = ?, lastname = ?, product_code = ?, study_location = ?, membership_start = ?, membership_end = ?, product_name = ? WHERE user_id = ?',
+      [
+        purchaseData.firstname,
+        purchaseData.lastname,
+        purchaseData.product_code,
+        purchaseData.study_location,
+        purchaseData.membership_start,
+        purchaseData.membership_end,
+        purchaseData.product_name,
+        userId,
+      ],
+      function (err: Error | null) {
+        if (err) {
+          console.error('Error updating user info:', err);
+          return reject(new Error('Error updating user info.'));
+        }
+        resolve();
+      },
+    );
+  });
+};
+
 export const getUserById = (userId: number): Promise<User | undefined> => {
   return new Promise((resolve, reject) => {
     db.get(
