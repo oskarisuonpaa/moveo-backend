@@ -39,20 +39,23 @@ export const registerVerification: RequestHandler = async (req, res) => {
     const email = req.query.email as string;
     const token = generateEmailVerificationToken(email);
 
+    // check whether user already exists
     const user = await getUserByEmail(email);
     if (user) {
       if (user.is_verified) {
         res.status(400).send('User already exists and is verified.');
+        return;
       } else {
         await updateUserVerificationToken(email, token);
         await sendVerificationEmail(email, token, `${verificationUrl}/verify`);
         res.status(200).send('Verification email re-sent.');
       }
-    }
-
+    } else {
+    // user does not exist, create user and send verification email
     await createUser(email, token);
     await sendVerificationEmail(email, token, `${verificationUrl}/verify`);
     res.status(200).send('Verification email sent.');
+    }
   } catch (error) {
     console.error('Error sending verification email:', error);
     res.status(500).send('Error sending verification email.');
