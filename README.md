@@ -136,7 +136,7 @@ Successful response: **201**.
 
 #### POST /:alias/:eventId/attend
 
-Adds the authorized user as a attendee to the event.
+Adds the authorized user as a attendee to the event if there is room.
 
 #### DELETE /:alias/:eventId/unattend
 
