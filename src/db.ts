@@ -3,6 +3,7 @@ const db = new sqlite3.Database('./moveoapp.sqlite');
 
 // ADDED product_name_english TO PRODUCTS TABLE, REINITIALIZE DB IF NEEDED
 // If you need to reinitialize the database, delete the moveoapp.sqlite file and it will be automatically recreated.
+
 // TODO: replace with real data, automation?
 const mockProducts = [
   {

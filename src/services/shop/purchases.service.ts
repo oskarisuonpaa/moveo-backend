@@ -1,14 +1,15 @@
 import db from '../../db';
+import type { Purchase } from '../../types/product';
 
 // handles purchases table
 
 // get all purchases based on email
 export const getPurchasesByEmail = (shopEmail: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<Purchase[]>((resolve, reject) => {
     db.all(
       'SELECT * FROM purchases WHERE shop_email = ?',
       [shopEmail],
-      (err, rows) => {
+      (err, rows: Purchase[]) => {
         if (err) {
           console.error('Database error:', err);
           return reject(new Error('Database error.'));
@@ -21,11 +22,11 @@ export const getPurchasesByEmail = (shopEmail: string) => {
 
 // gets the latest purchase based on email
 export const getLatestPurchaseByEmail = (shopEmail: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<Purchase | undefined>((resolve, reject) => {
     db.get(
       'SELECT * FROM purchases WHERE shop_email = ? ORDER BY purchase_date DESC LIMIT 1',
       [shopEmail],
-      (err, row) => {
+      (err, row: Purchase | undefined) => {
         if (err) {
           console.error('Database error:', err);
           return reject(new Error('Database error.'));
@@ -35,7 +36,6 @@ export const getLatestPurchaseByEmail = (shopEmail: string) => {
     );
   });
 };
-
 
 // adds a new purchase
 export const addPurchase = (
@@ -59,12 +59,14 @@ export const addPurchase = (
 };
 
 // gets a purchase by its ID
-export const getPurchaseById = (purchaseId: number): Promise<any> => {
+export const getPurchaseById = (
+  purchaseId: number,
+): Promise<Purchase | undefined> => {
   return new Promise((resolve, reject) => {
     db.get(
       'SELECT * FROM purchases WHERE purchase_id = ?',
       [purchaseId],
-      (err: Error | null, purchase: any) => {
+      (err: Error | null, purchase: Purchase | undefined) => {
         if (err) {
           console.error('Database error:', err);
           return reject(new Error('Database error.'));
@@ -75,16 +77,13 @@ export const getPurchaseById = (purchaseId: number): Promise<any> => {
   });
 };
 
-
 // gets all purchases for a specific product code
-export const getPurchasesByProductCode = (
-  productCode: string,
-) => {
-  return new Promise((resolve, reject) => {
+export const getPurchasesByProductCode = (productCode: string) => {
+  return new Promise<Purchase[]>((resolve, reject) => {
     db.all(
       'SELECT * FROM purchases WHERE product_code = ?',
       [productCode],
-      (err, rows) => {
+      (err, rows: Purchase[]) => {
         if (err) {
           console.error('Database error:', err);
           return reject(new Error('Database error.'));
@@ -136,9 +135,9 @@ export const updatePurchase = (
 
 // gets a list of all purchases
 // this could be used for admin purposes to see all purchases made
-export const getAllPurchases = (): Promise<any[]> => {
+export const getAllPurchases = (): Promise<Purchase[]> => {
   return new Promise((resolve, reject) => {
-    db.all('SELECT * FROM purchases', (err: Error | null, rows: any[]) => {
+    db.all('SELECT * FROM purchases', (err: Error | null, rows: Purchase[]) => {
       if (err) {
         console.error('Database error:', err);
         return reject(new Error('Database error.'));
@@ -153,12 +152,12 @@ export const getAllPurchases = (): Promise<any[]> => {
 export const getPurchasesByDateRange = (
   startDate: string,
   endDate: string,
-): Promise<any[]> => {
+): Promise<Purchase[]> => {
   return new Promise((resolve, reject) => {
     db.all(
       'SELECT * FROM purchases WHERE purchase_date BETWEEN ? AND ?',
       [startDate, endDate],
-      (err: Error | null, rows: any[]) => {
+      (err: Error | null, rows: Purchase[]) => {
         if (err) {
           console.error('Database error:', err);
           return reject(new Error('Database error.'));

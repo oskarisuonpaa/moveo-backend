@@ -1,11 +1,12 @@
 import db from '../../db';
+import type { Product } from '../../types/product';
 
 // service for products table
 
 // get all products
 export const getProducts = () => {
-  return new Promise((resolve, reject) => {
-    db.all('SELECT * FROM products', (err, rows) => {
+  return new Promise<Product[]>((resolve, reject) => {
+    db.all('SELECT * FROM products', (err, rows: Product[]) => {
       if (err) {
         reject(err);
       } else {
@@ -18,11 +19,11 @@ export const getProducts = () => {
 // get product by product code
 // product code (should be) unique, so it returns only one product
 export const getProductByCode = (productCode: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<Product | undefined>((resolve, reject) => {
     db.get(
       'SELECT * FROM products WHERE product_code = ?',
       [productCode],
-      (err, row) => {
+      (err, row: Product | undefined) => {
         if (err) {
           reject(err);
         } else {
@@ -35,15 +36,15 @@ export const getProductByCode = (productCode: string) => {
 
 // gets all products that match the end date
 export const getProductsByEndDate = (endDate: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<Product[]>((resolve, reject) => {
     db.all(
       'SELECT * FROM products WHERE product_end = ?',
       [endDate],
-      (err, row) => {
+      (err, rows: Product[]) => {
         if (err) {
           reject(err);
         } else {
-          resolve(row);
+          resolve(rows);
         }
       },
     );
@@ -52,11 +53,11 @@ export const getProductsByEndDate = (endDate: string) => {
 
 // gets all products that are older than the given date, by end date
 export const getProductsOlderThanDate = (date: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<Product[]>((resolve, reject) => {
     db.all(
       'SELECT * FROM products WHERE product_end < ?',
       [date],
-      (err, rows) => {
+      (err, rows: Product[]) => {
         if (err) {
           reject(err);
         } else {
@@ -69,11 +70,11 @@ export const getProductsOlderThanDate = (date: string) => {
 
 // gets all products that are newer than the given date, by end date
 export const getProductsNewerThanDate = (date: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<Product[]>((resolve, reject) => {
     db.all(
       'SELECT * FROM products WHERE product_end > ?',
       [date],
-      (err, rows) => {
+      (err, rows: Product[]) => {
         if (err) {
           reject(err);
         } else {
@@ -119,7 +120,14 @@ export const updateProduct = (
   return new Promise((resolve, reject) => {
     db.run(
       'UPDATE products SET product_name = ?, product_name_english = ?, product_code = ?, product_start = ?, product_end = ? WHERE product_id = ?',
-      [productName, productNameEnglish, productCode, productStart, productEnd, productId],
+      [
+        productName,
+        productNameEnglish,
+        productCode,
+        productStart,
+        productEnd,
+        productId,
+      ],
       function (err) {
         if (err) {
           reject(err);

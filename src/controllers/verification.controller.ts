@@ -15,7 +15,11 @@ import {
   getUserById,
   getUserByVerificationToken,
   linkShopEmailToUser,
+  updateUserInfoFromPurchase,
 } from '../services/users/users.service';
+import { getLatestPurchaseByEmail } from '../services/shop/purchases.service';
+import { getProductByCode } from '../services/shop/products.service';
+import type { Purchase, Product } from '../types/product';
 
 const verificationUrl = 'http://localhost:3001/verification';
 
@@ -64,25 +68,53 @@ export const shopEmailToUserLink: RequestHandler<
 
   try {
     const user = await getUserById(userId);
-    if (user) {
-      if (shopEmail === user.app_email && user.is_verified) {
-        // Directly link if emails match and user is verified
-        await linkShopEmailToUser(userId, shopEmail);
-        res.status(200).send('Shop email linked successfully.');
-      } else {
-        // Generate token and send verification email to shopEmail
-        const token = generateEmailVerificationToken(shopEmail);
-        await addPendingShopEmail(userId, shopEmail, token);
-        await updateUserVerificationToken(user.app_email, token);
-        await sendVerificationEmail(
-          shopEmail,
-          token,
-          `${verificationUrl}/verify-shop-email`,
-        );
-        res.status(200).send('Verification email sent to shop email.');
-      }
-    } else {
+    if (!user) {
       res.status(404).send('User not found.');
+      return;
+    }
+    // 1. Check for purchases
+    const latestPurchase: Purchase | undefined =
+      await getLatestPurchaseByEmail(shopEmail);
+    if (!latestPurchase) {
+      res.status(400).send('No purchases found for this shop email.');
+      return;
+    }
+
+    // 2. Get product info
+    const product: Product | undefined = await getProductByCode(
+      latestPurchase.product_code,
+    );
+    if (!product) {
+      res.status(400).send('Product not found for latest purchase.');
+      return;
+    }
+
+    // 3. Update user info
+    await updateUserInfoFromPurchase(userId, {
+      firstname: latestPurchase.firstname,
+      lastname: latestPurchase.lastname,
+      product_code: latestPurchase.product_code,
+      study_location: latestPurchase.study_location,
+      membership_start: product.product_start,
+      membership_end: product.product_end,
+      product_name: product.product_name,
+    });
+
+    if (shopEmail === user.app_email && user.is_verified) {
+      // Directly link if emails match and user is verified
+      await linkShopEmailToUser(userId, shopEmail);
+      res.status(200).send('Shop email linked successfully.');
+    } else {
+      // Generate token and send verification email to shopEmail
+      const token = generateEmailVerificationToken(shopEmail);
+      await addPendingShopEmail(userId, shopEmail, token);
+      await updateUserVerificationToken(user.app_email, token);
+      await sendVerificationEmail(
+        shopEmail,
+        token,
+        `${verificationUrl}/verify-shop-email`,
+      );
+      res.status(200).send('Verification email sent to shop email.');
     }
   } catch (error) {
     console.error('Error linking shop email:', error);
