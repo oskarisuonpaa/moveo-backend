@@ -5,6 +5,7 @@ import { badRequest } from '@utils/errors';
 import { AppDataSource } from 'database/data-source';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
+import UserProfile from '@models/userProfile.model';
 
 export const redirectToGoogle: RequestHandler = (_request, response) => {
   const url = googleOAuthService.generateAuthUrl();
@@ -20,6 +21,15 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
 
     const googleUser = await googleOAuthService.getUser(code as string);
 
+    const userProfileRepo = AppDataSource.getRepository(UserProfile);
+    let userProfile: UserProfile | null = await userProfileRepo.findOne({
+      where: { app_email: googleUser.email },
+    });
+    if (!userProfile) {
+      userProfile = userProfileRepo.create({ app_email: googleUser.email });
+      await userProfileRepo.save(userProfile);
+    }
+
     const repository = AppDataSource.getRepository('User');
     let user = await repository.findOne({
       where: { googleId: googleUser.googleId },
@@ -33,6 +43,7 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
         accessToken: googleUser.tokens.access_token,
         refreshToken: googleUser.tokens.refresh_token,
         tokenExpiryDate: googleUser.tokens.expiry_date,
+        userProfileId: userProfile.user_id,
       });
       await repository.save(user);
     }

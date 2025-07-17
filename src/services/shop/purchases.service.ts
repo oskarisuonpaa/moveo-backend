@@ -1,169 +1,108 @@
-import db from '../../db';
-import type { Purchase } from '../../types/product';
+import { AppDataSource } from 'database/data-source';
+import Purchase from '@models/purchase.model';
+import { DeleteResult, UpdateResult, Between } from 'typeorm';
 
+const PurchaseRepo = AppDataSource.getRepository(Purchase);
 // handles purchases table
 
 // get all purchases based on email
 export const getPurchasesByEmail = (shopEmail: string) => {
-  return new Promise<Purchase[]>((resolve, reject) => {
-    db.all(
-      'SELECT * FROM purchases WHERE shop_email = ?',
-      [shopEmail],
-      (err, rows: Purchase[]) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(new Error('Database error.'));
-        }
-        resolve(rows);
-      },
-    );
+  return PurchaseRepo.find({
+    where: {
+      shop_email: shopEmail,
+    },
   });
 };
 
 // gets the latest purchase based on email
 export const getLatestPurchaseByEmail = (shopEmail: string) => {
-  return new Promise<Purchase | undefined>((resolve, reject) => {
-    db.get(
-      'SELECT * FROM purchases WHERE shop_email = ? ORDER BY purchase_date DESC LIMIT 1',
-      [shopEmail],
-      (err, row: Purchase | undefined) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(new Error('Database error.'));
-        }
-        resolve(row);
-      },
-    );
+  return PurchaseRepo.findOne({
+    where: {
+      shop_email: shopEmail,
+    },
+    order: {
+      purchase_date: 'DESC',
+    },
   });
 };
 
 // adds a new purchase
 export const addPurchase = (
   shopEmail: string,
-  productId: number,
+  productCode: string,
+  firstName: string,
+  lastName: string,
+  studyLocation: string,
   purchaseDate: string,
-): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'INSERT INTO purchases (shop_email, product_id, purchase_date) VALUES (?, ?, ?)',
-      [shopEmail, productId, purchaseDate],
-      function (err: Error | null) {
-        if (err) {
-          console.error('Error adding purchase:', err);
-          return reject(new Error('Error adding purchase.'));
-        }
-        resolve();
-      },
-    );
+): Promise<Purchase> => {
+  const purchase = PurchaseRepo.create({
+    shop_email: shopEmail,
+    product_code: productCode,
+    first_name: firstName,
+    last_name: lastName,
+    study_location: studyLocation,
+    purchase_date: purchaseDate,
   });
+  return PurchaseRepo.save(purchase);
 };
 
 // gets a purchase by its ID
 export const getPurchaseById = (
   purchaseId: number,
-): Promise<Purchase | undefined> => {
-  return new Promise((resolve, reject) => {
-    db.get(
-      'SELECT * FROM purchases WHERE purchase_id = ?',
-      [purchaseId],
-      (err: Error | null, purchase: Purchase | undefined) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(new Error('Database error.'));
-        }
-        resolve(purchase);
-      },
-    );
+): Promise<Purchase | null> => {
+  return PurchaseRepo.findOne({
+    where: { purchase_id: purchaseId },
   });
 };
 
 // gets all purchases for a specific product code
 export const getPurchasesByProductCode = (productCode: string) => {
-  return new Promise<Purchase[]>((resolve, reject) => {
-    db.all(
-      'SELECT * FROM purchases WHERE product_code = ?',
-      [productCode],
-      (err, rows: Purchase[]) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(new Error('Database error.'));
-        }
-        resolve(rows);
-      },
-    );
+  return PurchaseRepo.find({
+    where: { product_code: productCode },
   });
 };
 
 // deletes a purchase by its ID, probably not needed if we want to keep a record of all purchases
-export const deletePurchase = (purchaseId: number): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'DELETE FROM purchases WHERE purchase_id = ?',
-      [purchaseId],
-      function (err: Error | null) {
-        if (err) {
-          console.error('Error deleting purchase:', err);
-          return reject(new Error('Error deleting purchase.'));
-        }
-        resolve();
-      },
-    );
-  });
+export const deletePurchase = (purchaseId: number): Promise<DeleteResult> => {
+  return PurchaseRepo.delete({ purchase_id: purchaseId });
 };
 
 // updates a purchase by its id, not sure this is needed if we want to keep a record of all purchases
 export const updatePurchase = (
   purchaseId: number,
   shopEmail: string,
-  productId: number,
+  productCode: string,
   purchaseDate: string,
-): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'UPDATE purchases SET shop_email = ?, product_id = ?, purchase_date = ? WHERE purchase_id = ?',
-      [shopEmail, productId, purchaseDate, purchaseId],
-      function (err: Error | null) {
-        if (err) {
-          console.error('Error updating purchase:', err);
-          return reject(new Error('Error updating purchase.'));
-        }
-        resolve();
-      },
-    );
-  });
+): Promise<UpdateResult> => {
+  return PurchaseRepo.update(
+    { purchase_id: purchaseId },
+    {
+      shop_email: shopEmail,
+      product_code: productCode,
+      purchase_date: purchaseDate,
+    },
+  );
 };
 
 // gets a list of all purchases
 // this could be used for admin purposes to see all purchases made
 export const getAllPurchases = (): Promise<Purchase[]> => {
-  return new Promise((resolve, reject) => {
-    db.all('SELECT * FROM purchases', (err: Error | null, rows: Purchase[]) => {
-      if (err) {
-        console.error('Database error:', err);
-        return reject(new Error('Database error.'));
-      }
-      resolve(rows);
-    });
+  return PurchaseRepo.find({
+    order: {
+      purchase_date: 'DESC',
+    },
   });
 };
 
 // gets purchases made within a specific date range
 // this could be used for reporting purposes
 export const getPurchasesByDateRange = (
-  startDate: string,
-  endDate: string,
+  startDate: Date,
+  endDate: Date,
 ): Promise<Purchase[]> => {
-  return new Promise((resolve, reject) => {
-    db.all(
-      'SELECT * FROM purchases WHERE purchase_date BETWEEN ? AND ?',
-      [startDate, endDate],
-      (err: Error | null, rows: Purchase[]) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(new Error('Database error.'));
-        }
-        resolve(rows);
-      },
-    );
+  return PurchaseRepo.find({
+    where: {
+      purchase_date: Between(startDate, endDate),
+    },
   });
 };
