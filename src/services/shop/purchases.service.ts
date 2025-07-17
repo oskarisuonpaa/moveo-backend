@@ -27,21 +27,21 @@ export const getLatestPurchaseByEmail = (shopEmail: string) => {
 };
 
 // adds a new purchase
-export const addPurchase = (
-  shopEmail: string,
-  productCode: string,
-  firstName: string,
-  lastName: string,
-  studyLocation: string,
-  purchaseDate: string,
-): Promise<Purchase> => {
+export const addPurchase = (purchaseData: {
+  shopEmail: string;
+  productCode: string;
+  firstName: string;
+  lastName: string;
+  purchaseDate?: Date;
+  studyLocation: string;
+}): Promise<Purchase> => {
   const purchase = PurchaseRepo.create({
-    shop_email: shopEmail,
-    product_code: productCode,
-    first_name: firstName,
-    last_name: lastName,
-    study_location: studyLocation,
-    purchase_date: purchaseDate,
+    shop_email: purchaseData.shopEmail,
+    product_code: purchaseData.productCode,
+    first_name: purchaseData.firstName,
+    last_name: purchaseData.lastName,
+    study_location: purchaseData.studyLocation,
+    purchase_date: purchaseData.purchaseDate || new Date(),
   });
   return PurchaseRepo.save(purchase);
 };
