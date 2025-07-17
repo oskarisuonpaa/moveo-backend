@@ -9,14 +9,14 @@ import {
 } from 'typeorm';
 import UserProfile from './userProfile.model';
 
-@Entity({ name: 'users' })
-export default class User {
+@Entity({ name: 'pending_shop_emails' })
+export default class PendingShopEmail {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index({ unique: true })
+  @Index()
   @Column({ type: 'varchar', length: 255 })
-  email!: string;
+  shop_email!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   userProfileId!: string | null;
@@ -25,15 +25,9 @@ export default class User {
   @JoinColumn({ name: 'userProfileId', referencedColumnName: 'user_id' })
   userProfile?: UserProfile;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  googleId!: string | null;
+  @Column({ type: 'varchar', length: 255 })
+  verification_token!: string;
 
-  @Column({ type: 'varchar', length: 512, nullable: true })
-  accessToken!: string | null;
-
-  @Column({ type: 'varchar', length: 512, nullable: true })
-  refreshToken!: string | null;
-
-  @Column({ type: 'bigint', nullable: true })
-  tokenExpiryDate!: number | null;
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  created_at!: Date;
 }

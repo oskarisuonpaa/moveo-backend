@@ -1,87 +1,50 @@
-import db from '../../db';
-import type { Product } from '../../types/product';
+import { AppDataSource } from 'database/data-source';
+import Product from '@models/product.model';
+import { LessThan, MoreThan } from 'typeorm';
+
+const productRepository = AppDataSource.getRepository(Product);
 
 // service for products table
 
 // get all products
 export const getProducts = () => {
-  return new Promise<Product[]>((resolve, reject) => {
-    db.all('SELECT * FROM products', (err, rows: Product[]) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
-  });
+  return productRepository.find();
 };
 
 // get product by product code
 // product code (should be) unique, so it returns only one product
 export const getProductByCode = (productCode: string) => {
-  return new Promise<Product | undefined>((resolve, reject) => {
-    db.get(
-      'SELECT * FROM products WHERE product_code = ?',
-      [productCode],
-      (err, row: Product | undefined) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(row);
-        }
-      },
-    );
+  return productRepository.findOne({
+    where: {
+      product_code: productCode,
+    },
   });
 };
 
 // gets all products that match the end date
-export const getProductsByEndDate = (endDate: string) => {
-  return new Promise<Product[]>((resolve, reject) => {
-    db.all(
-      'SELECT * FROM products WHERE product_end = ?',
-      [endDate],
-      (err, rows: Product[]) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      },
-    );
+export const getProductsByEndDate = (endDate: Date) => {
+  return productRepository.find({
+    where: {
+      product_end: endDate,
+    },
   });
 };
 
 // gets all products that are older than the given date, by end date
-export const getProductsOlderThanDate = (date: string) => {
-  return new Promise<Product[]>((resolve, reject) => {
-    db.all(
-      'SELECT * FROM products WHERE product_end < ?',
-      [date],
-      (err, rows: Product[]) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      },
-    );
+export const getProductsOlderThanDate = (date: Date) => {
+  return productRepository.find({
+    where: {
+      product_end: LessThan(date),
+    },
   });
 };
 
 // gets all products that are newer than the given date, by end date
-export const getProductsNewerThanDate = (date: string) => {
-  return new Promise<Product[]>((resolve, reject) => {
-    db.all(
-      'SELECT * FROM products WHERE product_end > ?',
-      [date],
-      (err, rows: Product[]) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      },
-    );
+export const getProductsNewerThanDate = (date: Date) => {
+  return productRepository.find({
+    where: {
+      product_end: MoreThan(date),
+    },
   });
 };
 
@@ -93,65 +56,42 @@ export const addProduct = (
   productStart: string,
   productEnd: string,
 ) => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'INSERT INTO products (product_name, product_name_english, product_code, product_start, product_end) VALUES (?, ?, ?, ?, ?)',
-      [productName, productNameEnglish, productCode, productStart, productEnd],
-      function (err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(this.lastID);
-        }
-      },
-    );
+  const product = productRepository.create({
+    product_name: productName,
+    product_name_english: productNameEnglish,
+    product_code: productCode,
+    product_start: productStart,
+    product_end: productEnd,
   });
+  return productRepository.save(product);
 };
 
 // updates an existing product in the database
-export const updateProduct = (
+export const updateProduct = async (
   productId: number,
   productName: string,
   productNameEnglish: string,
   productCode: string,
-  productStart: string,
-  productEnd: string,
+  productStart: Date,
+  productEnd: Date,
 ) => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'UPDATE products SET product_name = ?, product_name_english = ?, product_code = ?, product_start = ?, product_end = ? WHERE product_id = ?',
-      [
-        productName,
-        productNameEnglish,
-        productCode,
-        productStart,
-        productEnd,
-        productId,
-      ],
-      function (err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(this.changes);
-        }
-      },
-    );
+  const product = {
+    product_name: productName,
+    product_name_english: productNameEnglish,
+    product_code: productCode,
+    product_start: productStart,
+    product_end: productEnd,
+  };
+  const existingProduct = await productRepository.findOneBy({
+    product_id: productId,
   });
+  if (!existingProduct) {
+    throw new Error('Product not found');
+  }
+  return productRepository.update(productId, product);
 };
 
 // deletes a product from the database by product ID
-export const deleteProduct = (productId: number) => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'DELETE FROM products WHERE product_id = ?',
-      [productId],
-      function (err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(this.changes);
-        }
-      },
-    );
-  });
+export const deleteProduct = async (productId: number) => {
+  return productRepository.delete({ product_id: productId });
 };

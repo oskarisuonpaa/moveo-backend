@@ -1,179 +1,108 @@
-import db from '../../db';
-import type { User } from '../../types/user';
-import type { RunResult } from 'sqlite3';
+import { AppDataSource } from 'database/data-source';
+import UserProfile from '@models/userProfile.model';
+import { UpdateResult } from 'typeorm';
 
-export function getUserByEmail(email: string): Promise<User | undefined> {
-  return new Promise((resolve, reject) => {
-    db.get(
-      'SELECT * FROM users WHERE app_email = ?',
-      [email],
-      (err: Error | null, user: User | undefined) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(new Error('Database error.'));
-        }
-        resolve(user);
-      },
-    );
-  });
-}
+const UserProfileRepo = AppDataSource.getRepository(UserProfile);
 
-export const createUser = (email: string, token: string) => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'INSERT INTO users (app_email, verification_token) VALUES (?, ?)',
-      [email, token],
-      (err: Error | null) => {
-        if (err) {
-          console.error('Error registering user:', err);
-          return reject(new Error('Error registering user.'));
-        }
-        resolve('User registered successfully.');
-      },
-    );
+export const getUserByEmail = (email: string): Promise<UserProfile | null> => {
+  return UserProfileRepo.findOne({ where: { app_email: email } });
+};
+
+export const createUser = async (email: string, token: string) => {
+  // Check if user already exists
+  const existingUser = await UserProfileRepo.findOne({
+    where: { app_email: email },
   });
+  if (existingUser) {
+    throw new Error('User already exists.');
+  }
+
+  // Create new user
+  const newUser = UserProfileRepo.create({
+    app_email: email,
+    verification_token: token,
+  });
+  return UserProfileRepo.save(newUser);
 };
 
 export const updateUserVerificationToken = (
   email: string,
   token: string | null,
-) => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'UPDATE users SET verification_token = ? WHERE app_email = ?',
-      [token, email],
-      (err: Error | null) => {
-        if (err) {
-          console.error('Error updating verification token:', err);
-          return reject(new Error('Error updating verification token.'));
-        }
-        resolve('Verification token updated successfully.');
-      },
-    );
-  });
+): Promise<UpdateResult> => {
+  if (!token) {
+    throw new Error('Token is required to update verification token.');
+  }
+  // Update user's verification token
+  return UserProfileRepo.update(
+    { app_email: email },
+    { verification_token: token },
+  );
 };
 
-export const verifyUser = (token: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    db.get(
-      'SELECT * FROM users WHERE verification_token = ?',
-      [token],
-      (err: Error | null, user: User | undefined) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(new Error('Database error.'));
-        }
-        if (!user) {
-          return reject(new Error('Invalid or expired token.'));
-        }
-
-        db.run(
-          'UPDATE users SET is_verified = 1, verification_token = NULL WHERE user_id = ?',
-          [user.user_id],
-          function (err: Error | null) {
-            if (err) {
-              console.error('Database error:', err);
-              return reject(new Error('Database error.'));
-            }
-            resolve('Email verified! You can now log in.');
-          },
-        );
-      },
-    );
+export const verifyUser = async (token: string): Promise<UpdateResult> => {
+  if (!token) {
+    throw new Error('Token is required for verification.');
+  }
+  // Verify user's token
+  const user = await UserProfileRepo.findOne({
+    where: { verification_token: token },
   });
+  if (!user) {
+    throw new Error('Invalid or expired token.');
+  }
+  // Update user's verification status
+  return UserProfileRepo.update(
+    { app_email: user.app_email },
+    { is_verified: true, verification_token: null },
+  );
 };
 
-// linking shop email to user
-export const linkShopEmailToUser = (
-  userId: number,
+export const linkShopEmailToUser = async (
+  userId: string,
   shopEmail: string,
-): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'UPDATE users SET shop_email = ? WHERE user_id = ?',
-      [shopEmail, userId],
-      function (this: RunResult, err: Error | null) {
-        if (err) {
-          console.error('Error linking shop email:', err);
-          return reject(new Error('Error linking shop email.'));
-        }
-        if (this.changes === 0) {
-          return reject(
-            new Error('User not found or shop email already linked.'),
-          );
-        }
-        resolve('Shop email linked successfully.');
-      },
-    );
-  });
+): Promise<UpdateResult> => {
+  return UserProfileRepo.update({ user_id: userId }, { shop_email: shopEmail });
 };
 
+export const getUserById = (userId: string): Promise<UserProfile | null> => {
+  return UserProfileRepo.findOne({ where: { user_id: userId } });
+};
+
+// called in verification.controller.ts
 export const updateUserInfoFromPurchase = (
-  userId: number,
+  userId: string,
   purchaseData: {
-    firstname: string;
-    lastname: string;
+    first_name: string;
+    last_name: string;
     product_code: string;
     study_location: string;
-    membership_start: string;
-    membership_end: string;
+    membership_start: Date | null;
+    membership_end: Date;
     product_name: string;
   },
-): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    db.run(
-      'UPDATE users SET firstname = ?, lastname = ?, product_code = ?, study_location = ?, membership_start = ?, membership_end = ?, product_name = ? WHERE user_id = ?',
-      [
-        purchaseData.firstname,
-        purchaseData.lastname,
-        purchaseData.product_code,
-        purchaseData.study_location,
-        purchaseData.membership_start,
-        purchaseData.membership_end,
-        purchaseData.product_name,
-        userId,
-      ],
-      function (err: Error | null) {
-        if (err) {
-          console.error('Error updating user info:', err);
-          return reject(new Error('Error updating user info.'));
-        }
-        resolve();
-      },
-    );
-  });
-};
-
-export const getUserById = (userId: number): Promise<User | undefined> => {
-  return new Promise((resolve, reject) => {
-    db.get(
-      'SELECT * FROM users WHERE user_id = ?',
-      [userId],
-      (err: Error | null, user: User | undefined) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(new Error('Database error.'));
-        }
-        resolve(user);
-      },
-    );
-  });
+): Promise<UpdateResult> => {
+  return UserProfileRepo.update(
+    { user_id: userId },
+    {
+      first_name: purchaseData.first_name,
+      last_name: purchaseData.last_name,
+      product_code: purchaseData.product_code,
+      study_location: purchaseData.study_location,
+      membership_start: purchaseData.membership_start
+        ? new Date(purchaseData.membership_start)
+        : null,
+      membership_end: new Date(purchaseData.membership_end),
+      product_name: purchaseData.product_name,
+    },
+  );
 };
 
 export const getUserByVerificationToken = (
   token: string,
-): Promise<User | undefined> => {
-  return new Promise((resolve, reject) => {
-    db.get(
-      'SELECT * FROM users WHERE verification_token = ?',
-      [token],
-      (err: Error | null, user: User | undefined) => {
-        if (err) {
-          console.error('Database error:', err);
-          return reject(new Error('Database error.'));
-        }
-        resolve(user);
-      },
-    );
-  });
+): Promise<UserProfile | null> => {
+  if (!token) {
+    throw new Error('Token is required to find user.');
+  }
+  // Find user by verification token
+  return UserProfileRepo.findOne({ where: { verification_token: token } });
 };
