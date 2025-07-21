@@ -39,9 +39,9 @@ app.use(attachGoogleClient);
 app.use('/api/calendars', calendarRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api/events', attendeesRouter);
-app.use('/verification', verificationRouter);
 app.use('/api/users', userRouter);
 app.use('/api/purchases', purchaseRouter);
+app.use('/verification', verificationRouter);
 
 //Temp
 app.post('/logout', (_req, res) => {
