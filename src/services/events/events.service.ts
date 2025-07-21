@@ -1,7 +1,8 @@
 import { calendar_v3 } from 'googleapis';
-import { calendarAliasToId } from './calendarCache.service';
-import { listCalendarEvents } from './googleCalendar.service';
+import { calendarAliasToId } from '@services/calendar/calendarCache.service';
+import { listCalendarEvents } from '@services/google/googleCalendar.service';
 import NodeCache from 'node-cache';
+import { notFound } from '@utils/errors';
 
 const EVENT_TTL_SECONDS = 5 * 60; // 5 minutes
 
@@ -30,10 +31,12 @@ export const getCalendarEventById = async (
 ): Promise<calendar_v3.Schema$Event> => {
   const events = await getCalendarEventsByCalendarAlias(alias);
   const event = events.find((e) => e.id === eventId);
+
   if (!event) {
-    throw new Error(`Event with ID ${eventId} not found in calendar ${alias}`);
+    notFound(`Event with ID ${eventId} not found in calendar ${alias}`);
   }
-  return event;
+
+  return event as calendar_v3.Schema$Event;
 };
 
 export const invalidateCalendarEventsCache = (alias: string) => {

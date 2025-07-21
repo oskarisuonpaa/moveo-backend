@@ -1,6 +1,6 @@
 import { calendar_v3 } from 'googleapis';
-import { calendarAliasToId } from './calendarCache.service';
-import * as googleCalendar from './googleCalendar.service';
+import * as googleCalendar from '../google/googleCalendar.service';
+import { calendarAliasToId } from '@services/calendar/calendarCache.service';
 import { invalidateCalendarEventsCache } from './events.service';
 
 export const createAndSyncCalendarEvent = async (

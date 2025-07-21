@@ -3,12 +3,12 @@ import { calendar_v3 } from 'googleapis';
 import {
   getCalendarEventById,
   getCalendarEventsByCalendarAlias,
-} from '../services/events.service';
-import { createAndSyncCalendarEvent } from '../services/eventManagement.service';
-import { sanitizeGoogleCalendarEventFormat } from '../utils/sanitizeGoogleCalendarEventFormat';
-import { successResponse } from '../utils/responses';
-import { asyncHandler } from '../utils/asyncHandler';
-import { AppError } from '../utils/errors';
+} from '@services/events/events.service';
+import { createAndSyncCalendarEvent } from '@services/events/eventManagement.service';
+import sanitizeGoogleCalendarEventFormat from '@utils/sanitizeGoogleCalendarEventFormat';
+import { successResponse } from '@utils/responses';
+import { asyncHandler } from '@utils/asyncHandler';
+import { badRequest } from '@utils/errors';
 
 export const getCalendarEvents: RequestHandler = asyncHandler(
   async (request, response) => {
@@ -33,18 +33,15 @@ export const getCalendarEvent: RequestHandler = asyncHandler(
 export const postCalendarEvent: RequestHandler = asyncHandler(
   async (request, response) => {
     const { alias } = request.params;
-    const { start, end, summary, description, location } = request.body as {
-      start: string;
-      end: string;
-      summary?: string;
-      description?: string;
-      location?: string;
-      maxAttendees?: number;
-    };
-
-    if (!alias || typeof alias !== 'string') {
-      throw new AppError('Invalid calendar alias', 400);
-    }
+    const { start, end, summary, description, location, maxAttendees } =
+      request.body as {
+        start: string;
+        end: string;
+        summary?: string;
+        description?: string;
+        location?: string;
+        maxAttendees?: number;
+      };
 
     if (
       !start ||
@@ -52,7 +49,7 @@ export const postCalendarEvent: RequestHandler = asyncHandler(
       typeof start !== 'string' ||
       typeof end !== 'string'
     ) {
-      throw new AppError('Invalid event dates', 400);
+      badRequest('Invalid event dates');
     }
 
     const event: calendar_v3.Schema$Event = {
@@ -61,6 +58,12 @@ export const postCalendarEvent: RequestHandler = asyncHandler(
       summary: summary || 'No Title',
       description: description || 'No Description',
       location: location || undefined,
+      extendedProperties: {
+        private: {
+          maxAttendees: maxAttendees ? String(maxAttendees) : '',
+          attendees: '',
+        },
+      },
     };
 
     await createAndSyncCalendarEvent(alias, event);

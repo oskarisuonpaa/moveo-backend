@@ -1,12 +1,12 @@
 import { RequestHandler } from 'express';
-import { asyncHandler } from '../utils/asyncHandler';
-import { badRequest } from '../utils/errors';
-import { successResponse } from '../utils/responses';
-import { getCalendarSummaries } from '../services/calendar.service';
+import { asyncHandler } from '@utils/asyncHandler';
+import { badRequest } from '@utils/errors';
+import { successResponse } from '@utils/responses';
+import { getCalendarSummaries } from '@services/calendar/calendar.service';
 import {
   createAndSyncCalendar,
   removeCalendar,
-} from '../services/calendarManagement.service';
+} from '@services/calendar/calendarManagement.service';
 
 export interface CalendarSummary {
   calendarId: string;

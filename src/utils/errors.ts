@@ -15,3 +15,7 @@ export const badRequest = (msg: string): never => {
 export const notFound = (msg: string): never => {
   throw new AppError(msg, 404);
 };
+
+export const unauthorized = (msg: string): never => {
+  throw new AppError(msg, 401);
+};
