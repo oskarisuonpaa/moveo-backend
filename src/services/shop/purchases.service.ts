@@ -11,7 +11,7 @@ const productDates = [
   { season: 'kevät', start: '1/1', end: '31/5' },
   { season: 'kesä', start: '1/6', end: '31/8' },
   { season: 'syksy', start: '1/9', end: '31/12' },
-]
+];
 
 // service for purchases table
 // get all purchases based on email
@@ -44,7 +44,6 @@ export const addPurchase = async (purchaseData: {
   purchaseDate?: Date;
   studyLocation: string;
 }): Promise<Purchase> => {
-
   // Need to convert product season into membership start and end dates
   const productSeason = await getProductSeason(purchaseData.productCode);
   if (!productSeason) {
@@ -64,11 +63,15 @@ export const addPurchase = async (purchaseData: {
   startDate.setDate(parseInt(seasonDates.start.split('/')[0]));
   startDate.setMonth(parseInt(seasonDates.start.split('/')[1]) - 1);
   // need to compare dateNow to endDate since someone could buy membership mid-season
-  startDate.setFullYear(dateNow < endDate ? dateNow.getFullYear() : dateNow.getFullYear() + 1);
+  startDate.setFullYear(
+    dateNow < endDate ? dateNow.getFullYear() : dateNow.getFullYear() + 1,
+  );
 
   endDate.setDate(parseInt(seasonDates.end.split('/')[0]));
   endDate.setMonth(parseInt(seasonDates.end.split('/')[1]) - 1);
-  endDate.setFullYear(dateNow < endDate ? dateNow.getFullYear() : dateNow.getFullYear() + 1);
+  endDate.setFullYear(
+    dateNow < endDate ? dateNow.getFullYear() : dateNow.getFullYear() + 1,
+  );
 
   // create and save new purchase
   const purchase = PurchaseRepo.create({

@@ -1,6 +1,11 @@
 import Router from 'express';
 
-import { addPurchaseController, getAllPurchasesController, getLatestPurchaseByEmailController, getPurchasesByEmailController } from '@controllers/purchase.controller';
+import {
+  addPurchaseController,
+  getAllPurchasesController,
+  getLatestPurchaseByEmailController,
+  getPurchasesByEmailController,
+} from '@controllers/purchase.controller';
 const router = Router();
 
 router.get('/', getAllPurchasesController);

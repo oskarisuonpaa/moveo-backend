@@ -31,7 +31,8 @@ export const addProduct = (
     product_name: productName,
     product_name_english: productNameEnglish,
     product_code: productCode,
-    product_season: productSeason  });
+    product_season: productSeason,
+  });
   return productRepository.save(product);
 };
 
@@ -71,7 +72,6 @@ export const getProductsBySeason = (season: string) => {
     },
   });
 };
-
 
 // get a product's season
 export const getProductSeason = (productCode: string) => {

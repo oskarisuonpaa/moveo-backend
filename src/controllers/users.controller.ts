@@ -1,7 +1,10 @@
 import { RequestHandler } from 'express';
 
-import { getAllUsers, getUserById, createUser } from '../services/users/users.service';
-
+import {
+  getAllUsers,
+  getUserById,
+  createUser,
+} from '../services/users/users.service';
 
 export const getUserList: RequestHandler = async (req, res) => {
   try {
@@ -30,10 +33,16 @@ export const getUser: RequestHandler = async (req, res) => {
   }
 };
 
-export const addUser: RequestHandler = async (req, res) => {
+export const addUser: RequestHandler<
+  object,
+  unknown,
+  {
+    email: string;
+  }
+> = async (req, res) => {
   try {
     const { email } = req.body;
-    const token = "tokenhere"
+    const token = 'tokenhere';
     // Call the service to add the user
     const newUser = await createUser(email, token);
     res.status(201).json(newUser);
