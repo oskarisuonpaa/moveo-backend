@@ -21,6 +21,27 @@ export const getPendingShopEmailByUserId = (
   });
 };
 
+export const getPendingShopEmailByTokenAndId = (
+  token: string,
+  userId: string
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    pendingShopEmailRepo
+      .findOne({ where: { verification_token: token, userProfileId: userId } })
+      .then((email) => {
+        if (!email) {
+          return reject(new Error('Pending shop email not found.'));
+        }
+        resolve(email.shop_email);
+      })
+      .catch((err) => {
+        console.error('Error fetching pending shop email:', err);
+        reject(new Error('Error fetching pending shop email.'));
+      });
+  });
+};
+
+
 export const addPendingShopEmail = (
   userId: string,
   shopEmail: string,

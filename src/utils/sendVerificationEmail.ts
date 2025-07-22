@@ -7,7 +7,9 @@ export async function sendVerificationEmail(
 ) {
   const transporter = nodemailer.createTransport({
     // configure email provider
-    service: 'gmail',
+    // TODO: replace with actual email provider configuration
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
     auth: {
       user: process.env.MOVEO_EMAIL || '',
       pass: process.env.MOVEO_EMAIL_PASSWORD || '',

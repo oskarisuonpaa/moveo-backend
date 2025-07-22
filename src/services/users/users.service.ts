@@ -29,7 +29,7 @@ export const updateUserVerificationToken = (
   email: string,
   token: string | null,
 ): Promise<UpdateResult> => {
-  if (!token) {
+  if (typeof token === 'undefined') {
     throw new Error('Token is required to update verification token.');
   }
   // Update user's verification token
