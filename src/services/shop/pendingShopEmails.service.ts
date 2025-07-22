@@ -23,7 +23,7 @@ export const getPendingShopEmailByUserId = (
 
 export const getPendingShopEmailByTokenAndId = (
   token: string,
-  userId: string
+  userId: string,
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     pendingShopEmailRepo
@@ -40,7 +40,6 @@ export const getPendingShopEmailByTokenAndId = (
       });
   });
 };
-
 
 export const addPendingShopEmail = (
   userId: string,

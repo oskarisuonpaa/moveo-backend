@@ -113,9 +113,9 @@ export const shopEmailToUserVerification: RequestHandler = async (req, res) => {
       return;
     }
 
- const pendingEmail = await getPendingShopEmailByTokenAndId(
+    const pendingEmail = await getPendingShopEmailByTokenAndId(
       token,
-      user.user_id
+      user.user_id,
     );
     if (!pendingEmail) {
       res.status(400).send('No pending shop email found for this user.');
