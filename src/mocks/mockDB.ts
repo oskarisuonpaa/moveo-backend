@@ -7,6 +7,7 @@ type User = {
 export const fakeUsers: User[] = [
   { ID: 1, user_email: 'test@example.com', user_pass: '' },
   { ID: 2, user_email: 'test@lab.fi', user_pass: '' },
+  { ID: 2, user_email: 'test1@lab.fi', user_pass: '$P$Bt.5QcZJOIgUM9zchiyT9VHkglbT8o/' },
   { ID: 3, user_email: 'registered@example.com', user_pass: '$P$mockedhash' },
   
 ];

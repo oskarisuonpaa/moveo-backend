@@ -13,6 +13,7 @@ import config from '@config';
 import attachGoogleClient from '@middleware/attachGoogleClient.middleware';
 import verificationRouter from '@routes/verification.routes';
 import registerRouter from '@routes/register';
+import loginRouter from '@routes/login';
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 });
 
 app.use('/auth', authRouter);
+app.use('/api/login', loginRouter);
 app.use('/api/register', registerRouter);
 
 app.use(authenticateJWT);
