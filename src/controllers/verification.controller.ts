@@ -20,7 +20,8 @@ import {
 import { getLatestPurchaseByEmail } from '../services/shop/purchases.service';
 import { getProductByCode } from '../services/shop/products.service';
 
-const verificationUrl = 'http://localhost:3001/verification';
+// TODO: replace with frontend url
+const verificationUrl = 'http://localhost:5173';
 
 interface ShopEmailLinkBody {
   userId: string;
@@ -33,6 +34,8 @@ interface ShopEmailLinkBody {
  * and verify shop email.
  */
 
+// registering verification, maybe not needed with Google Oauth
+// unless we want to enable logging in without Google after first time
 export const registerVerification: RequestHandler = async (req, res) => {
   try {
     const email = req.query.email as string;
@@ -90,7 +93,7 @@ export const shopEmailToUserLink: RequestHandler<
     await sendVerificationEmail(
       shopEmail,
       token,
-      `${verificationUrl}/verify-shop-email`,
+      `${verificationUrl}/verify-email`,
     );
     res.status(200).send('Verification email sent to shop email.');
   } catch (error) {
@@ -135,8 +138,8 @@ export const shopEmailToUserVerification: RequestHandler = async (req, res) => {
       last_name: latestPurchase.last_name,
       product_code: latestPurchase.product_code,
       study_location: latestPurchase.study_location,
-      membership_start: product.product_start,
-      membership_end: product.product_end,
+      membership_start: latestPurchase.product_start_date,
+      membership_end: latestPurchase.product_end_date,
       product_name: product.product_name,
     });
 
