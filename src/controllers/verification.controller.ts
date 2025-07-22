@@ -8,7 +8,7 @@ import { sendVerificationEmail } from '../utils/sendVerificationEmail';
 import { generateEmailVerificationToken } from '../utils/token';
 import {
   addPendingShopEmail,
-  getPendingShopEmailByUserId,
+  getPendingShopEmailByTokenAndId,
   removePendingShopEmail,
 } from '../services/shop/pendingShopEmails.service';
 import {
@@ -93,7 +93,7 @@ export const shopEmailToUserLink: RequestHandler<
     await sendVerificationEmail(
       shopEmail,
       token,
-      `${verificationUrl}/verify-email`,
+      `${verificationUrl}/verify-shop-email`,
     );
     res.status(200).send('Verification email sent to shop email.');
   } catch (error) {
@@ -113,7 +113,10 @@ export const shopEmailToUserVerification: RequestHandler = async (req, res) => {
       return;
     }
 
-    const pendingEmail = await getPendingShopEmailByUserId(user.user_id);
+    const pendingEmail = await getPendingShopEmailByTokenAndId(
+      token,
+      user.user_id,
+    );
     if (!pendingEmail) {
       res.status(400).send('No pending shop email found for this user.');
       return;
