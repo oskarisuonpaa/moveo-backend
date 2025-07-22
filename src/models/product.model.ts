@@ -16,9 +16,6 @@ export default class Product {
   @Column({ type: 'varchar', length: 255 })
   product_code!: string;
 
-  @Column({ type: 'date', nullable: true })
-  product_start!: Date | null;
-
-  @Column({ type: 'date' })
-  product_end!: Date;
+  @Column({ type: 'varchar' })
+  product_season!: string;
 }

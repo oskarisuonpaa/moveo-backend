@@ -1,6 +1,6 @@
 import { AppDataSource } from './data-source';
 import Product from '../models/product.model';
-import { mockProducts } from '../mocks/mockProducts';
+import mockProducts from '../mocks/products.json';
 
 // uses mockdata, update for production
 export async function seedProducts() {

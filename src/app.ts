@@ -12,6 +12,8 @@ import { AppError } from '@utils/errors';
 import config from '@config';
 import attachGoogleClient from '@middleware/attachGoogleClient.middleware';
 import verificationRouter from '@routes/verification.routes';
+import userRouter from '@routes/users.routes';
+import purchaseRouter from '@routes/purchase.routes';
 
 const app = express();
 
@@ -37,6 +39,8 @@ app.use(attachGoogleClient);
 app.use('/api/calendars', calendarRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api/events', attendeesRouter);
+app.use('/api/users', userRouter);
+app.use('/api/purchases', purchaseRouter);
 app.use('/verification', verificationRouter);
 
 //Temp

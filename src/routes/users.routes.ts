@@ -1,11 +1,12 @@
 import Router from 'express';
-import { getUser } from '../controllers/users.controller';
+import { getUser, getUserList, addUser } from '../controllers/users.controller';
 const router = Router();
 
-router.get('/', (req, res) => {
-  res.status(403).send('Forbidden: Not authorized to access this endpoint.');
-});
+// TODO: non-admin should not have access to /
+router.get('/', getUserList);
 
 router.get('/:userId', getUser);
+
+router.post('/', addUser);
 
 export default router;
