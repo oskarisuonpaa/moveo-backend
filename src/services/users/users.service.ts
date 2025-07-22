@@ -64,6 +64,10 @@ export const linkShopEmailToUser = async (
   return UserProfileRepo.update({ user_id: userId }, { shop_email: shopEmail });
 };
 
+export const getAllUsers = (): Promise<UserProfile[]> => {
+  return UserProfileRepo.find();
+};
+
 export const getUserById = (userId: string): Promise<UserProfile | null> => {
   return UserProfileRepo.findOne({ where: { user_id: userId } });
 };

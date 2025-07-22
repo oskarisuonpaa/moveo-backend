@@ -1,0 +1,82 @@
+[
+  {
+    "product_name": "MOVEO LAPPEENRANTA JÄSENYYS, OPISKELIJA",
+    "product_code": "30000-03",
+    "product_season": "kevät"
+  },
+  {
+    "product_name": "MOVEO LAPPEENRANTA JÄSENYYS, OPISKELIJA",
+    "product_code": "30000-10",
+    "product_season": "syksy"
+  },
+  {
+    "product_name": "MOVEO LAPPEENRANTA HENKILÖKUNTA",
+    "product_code": "30000-07",
+    "product_season": "kevät"
+  },
+  {
+    "product_name": "MOVEO LAPPEENRANTA HENKILÖKUNTA",
+    "product_code": "30000-11",
+    "product_season": "syksy"
+  },
+  {
+    "product_name": "MOVEO KESÄJÄSENYYS LAPPEENRANTA, OPISKELIJA",
+    "product_code": "30000-02",
+    "product_season": "kesä"
+  },
+  {
+    "product_name": "MOVEO LAPPEENRANTA JÄSENYYS, MUUT KORKEAKOULUOPISKELIJAT",
+    "product_code": "30000-05",
+    "product_season": "kevät"
+  },
+  {
+    "product_name": "MOVEO LAPPEENRANTA JÄSENYYS, MUUT KORKEAKOULUOPISKELIJAT",
+    "product_code": "30000-12",
+    "product_season": "syksy"
+  },
+  {
+    "product_name": "MOVEO LAHTI JÄSENYYS, OPISKELIJA",
+    "product_code": "30010-04",
+    "product_season": "kevät"
+  },
+  {
+    "product_name": "MOVEO LAHTI JÄSENYYS, OPISKELIJA",
+    "product_code": "30010-07",
+    "product_season": "syksy"
+  },
+  {
+    "product_name": "MOVEO LAHTI HENKILÖKUNTA",
+    "product_code": "30010-05",
+    "product_season": "kevät"
+  },
+  {
+    "product_name": "MOVEO LAHTI HENKILÖKUNTA",
+    "product_code": "30010-08",
+    "product_season": "syksy"
+  },
+  {
+    "product_name": "MOVEO KESÄJÄSENYYS LAHTI, OPISKELIJA",
+    "product_code": "30010-03",
+    "product_season": "kesä"
+  },
+  {
+    "product_name": "MOVEO LAHTI JÄSENYYS, MUUT KORKEAKOULUOPISKELIJAT",
+    "product_code": "30010-06",
+    "product_season": "kevät"
+  },
+  {
+    "product_name": "MOVEO LAHTI JÄSENYYS, MUUT KORKEAKOULUOPISKELIJAT",
+    "product_code": "30010-09",
+    "product_season": "syksy"
+  },
+  {
+    "product_name": "MOVEO KOUVOLA, OPISKELIJA",
+    "product_code": "30030-01",
+    "product_season": "kevät"
+  },
+  {
+    "product_name": "MOVEO KOUVOLA, OPISKELIJA",
+    "product_code": "30030-02",
+    "product_season": "syksy"
+  }
+]

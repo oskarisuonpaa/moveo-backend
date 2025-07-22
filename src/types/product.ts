@@ -3,8 +3,7 @@ export interface Product {
   product_name: string;
   product_name_english: string;
   product_code: string;
-  product_start: string;
-  product_end: string;
+  product_season: string;
 }
 
 export interface Purchase {
@@ -15,4 +14,6 @@ export interface Purchase {
   firstname: string;
   lastname: string;
   study_location: string;
+  product_start_date: Date;
+  product_end_date: Date;
 }

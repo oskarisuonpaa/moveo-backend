@@ -1,4 +1,5 @@
 export const mockProducts = [
+  /*
   {
     product_name: 'Moveo Kouvola',
     product_name_english: 'Moveo Kouvola membership',
@@ -37,4 +38,5 @@ export const mockProducts = [
     product_start: new Date('2025-01-01'),
     product_end: new Date('2025-08-31'),
   },
+  */
 ];
