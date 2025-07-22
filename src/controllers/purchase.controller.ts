@@ -7,6 +7,9 @@ interface PurchaseData {
     firstName: string;
     lastName: string;
     studyLocation: string;
+    purchaseDate: Date;
+    productStartDate: Date;
+    productEndDate: Date;
 }
 /**
  * Controller to handle purchase-related operations.

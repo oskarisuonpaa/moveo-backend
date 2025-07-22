@@ -138,8 +138,8 @@ export const shopEmailToUserVerification: RequestHandler = async (req, res) => {
       last_name: latestPurchase.last_name,
       product_code: latestPurchase.product_code,
       study_location: latestPurchase.study_location,
-      membership_start: product.product_start,
-      membership_end: product.product_end,
+      membership_start: latestPurchase.product_start_date,
+      membership_end: latestPurchase.product_end_date,
       product_name: product.product_name,
     });
 

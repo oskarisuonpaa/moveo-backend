@@ -19,6 +19,12 @@ export default class Purchase {
   @Column({ type: 'varchar', length: 255 })
   first_name!: string;
 
+  @Column({ type: 'date', length: 255 })
+  product_start_date!: Date;
+
+  @Column({ type: 'date', length: 255 })
+  product_end_date!: Date;
+
   @Column({ type: 'varchar', length: 255 })
   last_name!: string;
 
