@@ -8,7 +8,7 @@ import { createAndSyncCalendarEvent } from '@services/events/eventManagement.ser
 import sanitizeGoogleCalendarEventFormat from '@utils/sanitizeGoogleCalendarEventFormat';
 import { successResponse } from '@utils/responses';
 import { asyncHandler } from '@utils/asyncHandler';
-import { badRequest } from '@utils/errors';
+import AppError from '@utils/errors';
 
 export const getCalendarEvents: RequestHandler = asyncHandler(
   async (request, response) => {
@@ -49,7 +49,7 @@ export const postCalendarEvent: RequestHandler = asyncHandler(
       typeof start !== 'string' ||
       typeof end !== 'string'
     ) {
-      badRequest('Invalid event dates');
+      throw AppError.badRequest('Invalid event dates');
     }
 
     const event: calendar_v3.Schema$Event = {

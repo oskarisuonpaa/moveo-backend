@@ -1,7 +1,7 @@
 import config from '@config';
 import googleOAuthService from '@services/google/googleOAuth.service';
 import { asyncHandler } from '@utils/asyncHandler';
-import { badRequest } from '@utils/errors';
+import AppError from '@utils/errors';
 import { AppDataSource } from 'database/data-source';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
@@ -16,10 +16,10 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
   async (request, response) => {
     const { code } = request.query as { code?: string };
     if (!code) {
-      badRequest('No code returned from Google');
+      throw AppError.badRequest('No code returned from Google');
     }
 
-    const googleUser = await googleOAuthService.getUser(code as string);
+    const googleUser = await googleOAuthService.getUser(code);
 
     const userProfileRepo = AppDataSource.getRepository(UserProfile);
     let userProfile: UserProfile | null = await userProfileRepo.findOne({

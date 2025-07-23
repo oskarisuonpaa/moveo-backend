@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RequestHandler } from 'express';
-import { badRequest } from '@utils/errors';
+import AppError from '@utils/errors';
 
 const nonEmptyObject = z
   .record(z.unknown())
@@ -11,7 +11,7 @@ const nonEmptyObject = z
 const requireRequestBody: RequestHandler = (request, _response, next) => {
   const result = nonEmptyObject.safeParse(request.body);
   if (!result.success) {
-    return next(badRequest('Invalid request body'));
+    return next(AppError.badRequest('Invalid request body'));
   }
   next();
 };

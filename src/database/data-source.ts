@@ -10,6 +10,7 @@ import Product from '@models/product.model';
 import PendingShopEmail from '@models/pendingShopEmail.model';
 import Purchase from '@models/purchase.model';
 import { seedProducts } from './seedData';
+import AppError from '@utils/errors';
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
@@ -33,7 +34,6 @@ export const initializeDataSource = async () => {
     await seedProducts();
     logger.info('Products seeded successfully.');
   } catch (error) {
-    logger.error('Error during Data Source initialization:', error);
-    throw error;
+    throw AppError.internal('Error during Data Source initialization:', error);
   }
 };

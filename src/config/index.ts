@@ -26,7 +26,9 @@ const config: Config = {
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID || '',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    redirectUri: process.env.GOOGLE_REDIRECT_URI || '',
+    redirectUri:
+      process.env.GOOGLE_REDIRECT_URI ||
+      'http://localhost:3000/auth/google/callback',
   },
   jwtSecret: process.env.JWT_SECRET || 'verysecretkey',
   frontendRedirectUri:

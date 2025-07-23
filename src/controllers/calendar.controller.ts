@@ -1,12 +1,12 @@
 import { RequestHandler } from 'express';
 import { asyncHandler } from '@utils/asyncHandler';
-import { badRequest } from '@utils/errors';
 import { successResponse } from '@utils/responses';
 import { getCalendarSummaries } from '@services/calendar/calendar.service';
 import {
   createAndSyncCalendar,
   removeCalendar,
 } from '@services/calendar/calendarManagement.service';
+import AppError from '@utils/errors';
 
 export interface CalendarSummary {
   calendarId: string;
@@ -32,7 +32,7 @@ export const postCalendar: RequestHandler<
 > = asyncHandler(async (request, response) => {
   const { alias } = request.body;
   if (!alias || typeof alias !== 'string') {
-    badRequest('Invalid calendar alias');
+    throw AppError.badRequest('Invalid calendar alias');
   }
 
   const newCalendar = await createAndSyncCalendar(alias);

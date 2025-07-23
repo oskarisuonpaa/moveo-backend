@@ -1,11 +1,15 @@
 import config from '@config';
-import { AppError } from '@utils/errors';
+import AppError from '@utils/errors';
 import { OAuth2Client } from 'google-auth-library';
 
 class GoogleOAuthService {
   private client: OAuth2Client;
 
   constructor() {
+    if (!config.google.clientId || !config.google.clientSecret) {
+      throw AppError.internal('Google client ID or secret not configured');
+    }
+
     this.client = new OAuth2Client(
       config.google.clientId,
       config.google.clientSecret,
@@ -31,7 +35,7 @@ class GoogleOAuthService {
     });
 
     const payload = ticket.getPayload();
-    if (!payload) throw new AppError('Invalid Google ID token');
+    if (!payload) throw AppError.forbidden('Invalid Google ID token');
 
     return {
       googleId: payload.sub,
@@ -44,7 +48,7 @@ class GoogleOAuthService {
 
   async refreshTokens() {
     if (!this.client.credentials.refresh_token) {
-      throw new AppError('No refresh token available', 400);
+      throw AppError.badRequest('No refresh token available');
     }
 
     const { credentials } = await this.client.refreshAccessToken();
