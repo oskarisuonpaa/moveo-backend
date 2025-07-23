@@ -1,6 +1,7 @@
 import { AppDataSource } from 'database/data-source';
 import UserProfile from '@models/userProfile.model';
 import { UpdateResult } from 'typeorm';
+import AppError from '@utils/errors';
 
 const UserProfileRepo = AppDataSource.getRepository(UserProfile);
 
@@ -14,7 +15,7 @@ export const createUser = async (email: string, token: string) => {
     where: { app_email: email },
   });
   if (existingUser) {
-    throw new Error('User already exists.');
+    throw AppError.conflict('User already exists.');
   }
 
   // Create new user
@@ -30,7 +31,9 @@ export const updateUserVerificationToken = (
   token: string | null,
 ): Promise<UpdateResult> => {
   if (typeof token === 'undefined') {
-    throw new Error('Token is required to update verification token.');
+    throw AppError.badRequest(
+      'Token is required to update verification token.',
+    );
   }
   // Update user's verification token
   return UserProfileRepo.update(
@@ -41,14 +44,14 @@ export const updateUserVerificationToken = (
 
 export const verifyUser = async (token: string): Promise<UpdateResult> => {
   if (!token) {
-    throw new Error('Token is required for verification.');
+    throw AppError.badRequest('Token is required for verification.');
   }
   // Verify user's token
   const user = await UserProfileRepo.findOne({
     where: { verification_token: token },
   });
   if (!user) {
-    throw new Error('Invalid or expired token.');
+    throw AppError.notFound('Invalid or expired token.');
   }
   // Update user's verification status
   return UserProfileRepo.update(
@@ -105,7 +108,7 @@ export const getUserByVerificationToken = (
   token: string,
 ): Promise<UserProfile | null> => {
   if (!token) {
-    throw new Error('Token is required to find user.');
+    throw AppError.badRequest('Token is required to find user.');
   }
   // Find user by verification token
   return UserProfileRepo.findOne({ where: { verification_token: token } });

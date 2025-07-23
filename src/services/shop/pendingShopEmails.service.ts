@@ -1,75 +1,47 @@
 import { AppDataSource } from 'database/data-source';
 import PendingShopEmail from '@models/pendingShopEmail.model';
+import AppError from '@utils/errors';
 
 const pendingShopEmailRepo = AppDataSource.getRepository(PendingShopEmail);
-export const getPendingShopEmailByUserId = (
+
+export const getPendingShopEmailByUserId = async (
   userId: string,
 ): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    pendingShopEmailRepo
-      .findOne({ where: { userProfileId: userId } })
-      .then((email) => {
-        if (!email) {
-          return reject(new Error('Pending shop email not found.'));
-        }
-        resolve(email.shop_email);
-      })
-      .catch((err) => {
-        console.error('Error fetching pending shop email:', err);
-        reject(new Error('Error fetching pending shop email.'));
-      });
+  const email = await pendingShopEmailRepo.findOne({
+    where: { userProfileId: userId },
   });
+  if (!email) {
+    throw AppError.notFound('Pending shop email not found.');
+  }
+  return email.shop_email;
 };
 
-export const getPendingShopEmailByTokenAndId = (
+export const getPendingShopEmailByTokenAndId = async (
   token: string,
   userId: string,
 ): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    pendingShopEmailRepo
-      .findOne({ where: { verification_token: token, userProfileId: userId } })
-      .then((email) => {
-        if (!email) {
-          return reject(new Error('Pending shop email not found.'));
-        }
-        resolve(email.shop_email);
-      })
-      .catch((err) => {
-        console.error('Error fetching pending shop email:', err);
-        reject(new Error('Error fetching pending shop email.'));
-      });
+  const email = await pendingShopEmailRepo.findOne({
+    where: { verification_token: token, userProfileId: userId },
   });
+  if (!email) {
+    throw AppError.notFound('Pending shop email not found.');
+  }
+  return email.shop_email;
 };
 
-export const addPendingShopEmail = (
+export const addPendingShopEmail = async (
   userId: string,
   shopEmail: string,
   verificationToken: string,
 ): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const pendingEmail = pendingShopEmailRepo.create({
-      userProfileId: userId,
-      shop_email: shopEmail,
-      verification_token: verificationToken,
-    });
-    pendingShopEmailRepo
-      .save(pendingEmail)
-      .then(() => resolve())
-      .catch((err) => {
-        console.error('Error adding pending shop email:', err);
-        reject(new Error('Error adding pending shop email.'));
-      });
+  const pendingEmail = pendingShopEmailRepo.create({
+    userProfileId: userId,
+    shop_email: shopEmail,
+    verification_token: verificationToken,
   });
+  await pendingShopEmailRepo.save(pendingEmail);
 };
 
-export const removePendingShopEmail = (userId: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    pendingShopEmailRepo
-      .delete({ userProfileId: userId })
-      .then(() => resolve())
-      .catch((err) => {
-        console.error('Error removing pending shop email:', err);
-        reject(new Error('Error removing pending shop email.'));
-      });
-  });
+export const removePendingShopEmail = async (userId: string): Promise<void> => {
+  await pendingShopEmailRepo.delete({ userProfileId: userId });
 };

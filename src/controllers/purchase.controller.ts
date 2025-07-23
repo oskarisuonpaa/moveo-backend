@@ -5,6 +5,9 @@ import {
   getLatestPurchaseByEmail,
   getPurchasesByEmail,
 } from '../services/shop/purchases.service';
+import AppError from '@utils/errors';
+import { asyncHandler } from '../utils/asyncHandler';
+import { successResponse } from '../utils/responses';
 
 interface PurchaseData {
   productCode: string;
@@ -22,62 +25,34 @@ export const addPurchaseController: RequestHandler<
   object,
   unknown,
   PurchaseData
-> = async (req, res) => {
-  try {
-    const purchaseData: PurchaseData = req.body;
-    const newPurchase = await addPurchase(purchaseData);
-    res.status(201).json(newPurchase);
-  } catch (error) {
-    console.error('Error adding purchase:', error);
-    res.status(500).send((error as Error).message || 'Error adding purchase.');
-  }
-};
+> = asyncHandler(async (req, res) => {
+  const purchaseData: PurchaseData = req.body;
+  const newPurchase = await addPurchase(purchaseData);
+  successResponse(res, newPurchase, 201);
+});
 
-export const getAllPurchasesController: RequestHandler = async (req, res) => {
-  try {
+export const getAllPurchasesController: RequestHandler = asyncHandler(
+  async (req, res) => {
     const purchases = await getAllPurchases();
-    res.status(200).json(purchases);
-  } catch (error) {
-    console.error('Error fetching purchases:', error);
-    res
-      .status(500)
-      .send((error as Error).message || 'Error fetching purchases.');
-  }
-};
+    successResponse(res, purchases);
+  },
+);
 
 export const getPurchasesByEmailController: RequestHandler<{
   email: string;
-}> = async (req, res) => {
+}> = asyncHandler(async (req, res) => {
   const { email } = req.params;
-  try {
-    const purchases = await getPurchasesByEmail(email);
-    res.status(200).json(purchases);
-  } catch (error) {
-    console.error('Error fetching purchases by email:', error);
-    res
-      .status(500)
-      .send((error as Error).message || 'Error fetching purchases by email.');
-  }
-};
+  const purchases = await getPurchasesByEmail(email);
+  successResponse(res, purchases);
+});
 
-export const getLatestPurchaseByEmailController: RequestHandler = async (
-  req,
-  res,
-) => {
-  const { email } = req.params;
-  try {
+export const getLatestPurchaseByEmailController: RequestHandler = asyncHandler(
+  async (req, res) => {
+    const { email } = req.params;
     const latestPurchase = await getLatestPurchaseByEmail(email);
     if (!latestPurchase) {
-      res.status(404).send('No purchases found for this email.');
-      return;
+      throw AppError.notFound('No purchases found for this email.');
     }
-    res.status(200).json(latestPurchase);
-  } catch (error) {
-    console.error('Error fetching latest purchase by email:', error);
-    res
-      .status(500)
-      .send(
-        (error as Error).message || 'Error fetching latest purchase by email.',
-      );
-  }
-};
+    successResponse(res, latestPurchase);
+  },
+);

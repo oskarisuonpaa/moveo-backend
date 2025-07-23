@@ -3,6 +3,7 @@ import Purchase from '@models/purchase.model';
 import { DeleteResult, UpdateResult, Between } from 'typeorm';
 import { getProductSeason } from './products.service';
 import formatDate from '@utils/formatDate';
+import AppError from '@utils/errors';
 
 const PurchaseRepo = AppDataSource.getRepository(Purchase);
 
@@ -47,13 +48,13 @@ export const addPurchase = async (purchaseData: {
   // Need to convert product season into membership start and end dates
   const productSeason = await getProductSeason(purchaseData.productCode);
   if (!productSeason) {
-    throw new Error('Product not found');
+    throw AppError.notFound('Product not found');
   }
   const seasonDates = productDates.find(
     (season) => season.season === productSeason.product_season,
   );
   if (!seasonDates) {
-    throw new Error('Product season not found');
+    throw AppError.notFound('Product season not found');
   }
   // Dates are set DD/MM in the seasonDates object, set day and month based on that
   // year is current year, or next year if we've already passed end date

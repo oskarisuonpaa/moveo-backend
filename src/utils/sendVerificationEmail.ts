@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import config from '@config';
 
 export async function sendVerificationEmail(
   email: string,
@@ -11,15 +12,15 @@ export async function sendVerificationEmail(
     host: 'sandbox.smtp.mailtrap.io',
     port: 2525,
     auth: {
-      user: process.env.MOVEO_EMAIL || '',
-      pass: process.env.MOVEO_EMAIL_PASSWORD || '',
+      user: config.moveoEmail,
+      pass: config.moveoEmailPassword,
     },
   });
 
   const verificationUrl = `${url}?token=${token}`;
 
   await transporter.sendMail({
-    from: '"MoveoApp" <' + (process.env.MOVEO_EMAIL || '') + '>',
+    from: '"MoveoApp" <' + config.moveoEmail + '>',
     to: email,
     subject: 'Verify your email',
     html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>`,
