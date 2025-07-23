@@ -1,5 +1,6 @@
 import { AppDataSource } from 'database/data-source';
 import Product from '@models/product.model';
+import AppError from '@utils/errors';
 
 const productRepository = AppDataSource.getRepository(Product);
 
@@ -54,7 +55,7 @@ export const updateProduct = async (
     product_id: productId,
   });
   if (!existingProduct) {
-    throw new Error('Product not found');
+    throw AppError.notFound('Product not found');
   }
   return productRepository.update(productId, product);
 };
