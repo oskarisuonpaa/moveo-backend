@@ -16,6 +16,10 @@ const attachGoogleClient: RequestHandler = async (request, response, next) => {
     return next(AppError.badRequest('No Google credentials stored'));
   }
 
+  if (!config.google.clientId || !config.google.clientSecret) {
+    return next(AppError.internal('Google client ID or secret not configured'));
+  }
+
   const client = new OAuth2Client(
     config.google.clientId,
     config.google.clientSecret,
