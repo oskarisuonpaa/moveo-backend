@@ -19,6 +19,9 @@ import {
 } from '../services/users/users.service';
 import { getLatestPurchaseByEmail } from '../services/shop/purchases.service';
 import { getProductByCode } from '../services/shop/products.service';
+import AppError from '../utils/errors';
+import { asyncHandler } from '@utils/asyncHandler';
+import { successResponse } from '@utils/responses';
 
 // TODO: replace with frontend url
 const verificationUrl = 'http://localhost:5173';
@@ -36,8 +39,8 @@ interface ShopEmailLinkBody {
 
 // registering verification, maybe not needed with Google Oauth
 // unless we want to enable logging in without Google after first time
-export const registerVerification: RequestHandler = async (req, res) => {
-  try {
+export const registerVerification: RequestHandler = asyncHandler(
+  async (req, res) => {
     const email = req.query.email as string;
     const token = generateEmailVerificationToken(email);
 
@@ -45,72 +48,59 @@ export const registerVerification: RequestHandler = async (req, res) => {
     const user = await getUserByEmail(email);
     if (user) {
       if (user.is_verified) {
-        res.status(400).send('User already exists and is verified.');
-        return;
+        throw AppError.badRequest('User already exists and is verified.');
       } else {
         await updateUserVerificationToken(email, token);
         await sendVerificationEmail(email, token, `${verificationUrl}/verify`);
-        res.status(200).send('Verification email re-sent.');
+        successResponse(res, 'Verification email re-sent.');
       }
     } else {
       // user does not exist, create user and send verification email
       await createUser(email, token);
       await sendVerificationEmail(email, token, `${verificationUrl}/verify`);
-      res.status(200).send('Verification email sent.');
+      successResponse(res, 'Verification email sent.');
     }
-  } catch (error) {
-    console.error('Error sending verification email:', error);
-    res.status(500).send('Error sending verification email.');
-  }
-};
+  },
+);
 
 // user wants to link shop email to their account, send verification email
 export const shopEmailToUserLink: RequestHandler<
   object,
   unknown,
   ShopEmailLinkBody
-> = async (req, res) => {
+> = asyncHandler(async (req, res) => {
   const { userId, shopEmail } = req.body;
 
-  try {
-    const user = await getUserById(userId);
-    if (!user) {
-      res.status(404).send('User not found.');
-      return;
-    }
-
-    // Check for purchases
-    const latestPurchase = await getLatestPurchaseByEmail(shopEmail);
-    if (!latestPurchase) {
-      res.status(400).send('No purchases found for this shop email.');
-      return;
-    }
-
-    // Send verification email to shop email
-    const token = generateEmailVerificationToken(shopEmail);
-    await addPendingShopEmail(userId, shopEmail, token);
-    await updateUserVerificationToken(user.app_email, token);
-    await sendVerificationEmail(
-      shopEmail,
-      token,
-      `${verificationUrl}/verify-shop-email`,
-    );
-    res.status(200).send('Verification email sent to shop email.');
-  } catch (error) {
-    console.error('Error sending verification email:', error);
-    res.status(500).send('Error sending verification email.');
+  const user = await getUserById(userId);
+  if (!user) {
+    throw AppError.notFound('User not found.');
   }
-};
+
+  // Check for purchases
+  const latestPurchase = await getLatestPurchaseByEmail(shopEmail);
+  if (!latestPurchase) {
+    throw AppError.notFound('No purchases found for this shop email.');
+  }
+
+  // Send verification email to shop email
+  const token = generateEmailVerificationToken(shopEmail);
+  await addPendingShopEmail(userId, shopEmail, token);
+  await updateUserVerificationToken(user.app_email, token);
+  await sendVerificationEmail(
+    shopEmail,
+    token,
+    `${verificationUrl}/verify-shop-email`,
+  );
+  successResponse(res, 'Verification email sent to shop email.');
+});
 
 // user has verified their shop email, link it to their account
-export const shopEmailToUserVerification: RequestHandler = async (req, res) => {
-  const token = req.query.token as string;
-
-  try {
+export const shopEmailToUserVerification: RequestHandler = asyncHandler(
+  async (req, res) => {
+    const token = req.query.token as string;
     const user = await getUserByVerificationToken(token);
     if (!user) {
-      res.status(400).send('Invalid or expired token.');
-      return;
+      throw AppError.badRequest('Invalid or expired token.');
     }
 
     const pendingEmail = await getPendingShopEmailByTokenAndId(
@@ -118,21 +108,18 @@ export const shopEmailToUserVerification: RequestHandler = async (req, res) => {
       user.user_id,
     );
     if (!pendingEmail) {
-      res.status(400).send('No pending shop email found for this user.');
-      return;
+      throw AppError.badRequest('No pending shop email found for this user.');
     }
 
     // Get latest purchase and product info
     const latestPurchase = await getLatestPurchaseByEmail(pendingEmail);
     if (!latestPurchase) {
-      res.status(400).send('No purchases found for this shop email.');
-      return;
+      throw AppError.notFound('No purchases found for this shop email.');
     }
 
     const product = await getProductByCode(latestPurchase.product_code);
     if (!product) {
-      res.status(400).send('Product not found for latest purchase.');
-      return;
+      throw AppError.notFound('Product not found for latest purchase.');
     }
 
     // Update user info and link shop email
@@ -150,9 +137,6 @@ export const shopEmailToUserVerification: RequestHandler = async (req, res) => {
     await updateUserVerificationToken(user.app_email, null);
     await removePendingShopEmail(user.user_id);
 
-    res.status(200).send('Shop email verified and linked.');
-  } catch (error) {
-    console.error('Error verifying shop email:', error);
-    res.status(500).send('Error verifying shop email.');
-  }
-};
+    successResponse(res, 'Shop email verified and linked.');
+  },
+);
