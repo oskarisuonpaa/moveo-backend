@@ -1,5 +1,5 @@
+import AppError from '@utils/errors';
 import { NextFunction, Request, Response } from 'express';
-import { badRequest } from '@utils/errors';
 
 const requireCalendarAlias = (
   request: Request,
@@ -8,7 +8,7 @@ const requireCalendarAlias = (
 ) => {
   const { alias } = request.params;
   if (!alias || typeof alias !== 'string') {
-    return next(badRequest('Invalid calendar alias'));
+    return next(AppError.badRequest('Invalid calendar alias'));
   }
   next();
 };

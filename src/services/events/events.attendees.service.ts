@@ -1,4 +1,4 @@
-import { AppError } from '@utils/errors';
+import AppError from '@utils/errors';
 import { patchCalendarEvent } from '@services/google/googleCalendar.service';
 import {
   getCalendarEventById,
@@ -25,7 +25,7 @@ export const addAttendeeToEvent = async (
     ).length ?? 0;
 
   if (count >= max) {
-    throw new AppError('Event is full', 409);
+    throw AppError.conflict('Event is full');
   }
 
   const attendees = [...(event.attendees || []), { email }];

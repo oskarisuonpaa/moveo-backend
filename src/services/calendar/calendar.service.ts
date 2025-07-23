@@ -1,4 +1,4 @@
-import { AppError } from '@utils/errors';
+import AppError from '@utils/errors';
 import { getCalendarAliasMap } from './calendarCache.service';
 
 let cachedSummaries: string[] | null = null;
@@ -12,7 +12,7 @@ export const getCalendarSummaries = async (): Promise<string[]> => {
   const summaries = Object.entries(aliasMap).map(([alias]) => alias);
 
   if (summaries.length === 0) {
-    throw new AppError('No calendars found', 404);
+    throw AppError.notFound('No calendars found');
   }
 
   cachedSummaries = summaries;

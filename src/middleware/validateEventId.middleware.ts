@@ -1,5 +1,5 @@
+import AppError from '@utils/errors';
 import { NextFunction, Request, Response } from 'express';
-import { badRequest } from '@utils/errors';
 
 const requireEventId = (
   request: Request,
@@ -8,7 +8,7 @@ const requireEventId = (
 ) => {
   const { eventId } = request.params;
   if (!eventId || typeof eventId !== 'string') {
-    return next(badRequest('Invalid event ID'));
+    return next(AppError.badRequest('Invalid event ID'));
   }
   next();
 };
