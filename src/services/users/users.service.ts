@@ -2,8 +2,10 @@ import { AppDataSource } from 'database/data-source';
 import UserProfile from '@models/userProfile.model';
 import { UpdateResult } from 'typeorm';
 import AppError from '@utils/errors';
+import User from '@models/user.model';
 
 const UserProfileRepo = AppDataSource.getRepository(UserProfile);
+const UserRepo = AppDataSource.getRepository(User);
 
 export const getUserByEmail = (email: string): Promise<UserProfile | null> => {
   return UserProfileRepo.findOne({ where: { app_email: email } });
@@ -71,8 +73,23 @@ export const getAllUsers = (): Promise<UserProfile[]> => {
   return UserProfileRepo.find();
 };
 
-export const getUserById = (userId: string): Promise<UserProfile | null> => {
+export const getUserByProfileId = (userId: string): Promise<UserProfile | null> => {
   return UserProfileRepo.findOne({ where: { user_id: userId } });
+};
+
+export const getUserByUserId = async (userId: string): Promise<UserProfile | null> => {
+  if (!userId) {
+    throw AppError.badRequest('User ID is required to find user.');
+  }
+  const user = await UserRepo.findOne({ where: { id: userId } });
+  if (!user) {
+    throw AppError.notFound('User not found for the given user ID.');
+  }
+  const profileId = user.userProfileId;
+  if (!profileId) {
+    throw AppError.notFound('User profile not found for the given user ID.');
+  }
+  return UserProfileRepo.findOne({ where: { user_id: profileId } });
 };
 
 // called in verification.controller.ts
@@ -113,3 +130,16 @@ export const getUserByVerificationToken = (
   // Find user by verification token
   return UserProfileRepo.findOne({ where: { verification_token: token } });
 };
+
+// for checking whether a given email is already linked to an existing user
+export const checkUserEmails = async (email: string): Promise<UserProfile | null> => {
+  if (!email) {
+    throw AppError.badRequest('Email is required to check user emails.');
+  }
+  // Check if user exists by email
+  const emailFound = await UserProfileRepo.findOne({ where: [{ app_email: email }, { shop_email: email }] });
+  if (emailFound) {
+    throw AppError.conflict('Email is already linked to a user.');
+  }
+  return null;
+}

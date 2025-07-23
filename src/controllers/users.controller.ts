@@ -2,7 +2,8 @@ import { RequestHandler } from 'express';
 
 import {
   getAllUsers,
-  getUserById,
+  getUserByProfileId,
+  getUserByUserId,
   createUser,
 } from '../services/users/users.service';
 import { asyncHandler } from '../utils/asyncHandler';
@@ -16,7 +17,20 @@ export const getUserList: RequestHandler = asyncHandler(async (req, res) => {
 
 export const getUser: RequestHandler = asyncHandler(async (req, res) => {
   const userId = req.params.userId;
-  const user = await getUserById(userId);
+  const user = await getUserByProfileId(userId);
+
+  if (!user) {
+    throw AppError.notFound('User not found.');
+  }
+  successResponse(res, user);
+});
+
+export const getCurrentUser: RequestHandler = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw AppError.unauthorized('User not authenticated.');
+  }
+  const userId = req.user.id;
+  const user = await getUserByUserId(userId);
 
   if (!user) {
     throw AppError.notFound('User not found.');
