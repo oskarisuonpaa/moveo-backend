@@ -6,6 +6,10 @@ class GoogleOAuthService {
   private client: OAuth2Client;
 
   constructor() {
+    if (!config.google.clientId || !config.google.clientSecret) {
+      throw AppError.internal('Google client ID or secret not configured');
+    }
+
     this.client = new OAuth2Client(
       config.google.clientId,
       config.google.clientSecret,
