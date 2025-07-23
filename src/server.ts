@@ -2,8 +2,9 @@ import http from 'http';
 import app from './app';
 import logger from '@utils/logger';
 import { initializeDataSource } from './database/data-source';
+import config from '@config';
 
-const PORT = process.env.PORT || 3000;
+const PORT = config.port;
 const server = http.createServer(app);
 
 const startServer = async () => {

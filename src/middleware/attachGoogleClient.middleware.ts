@@ -2,18 +2,18 @@ import { RequestHandler } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import { AppDataSource } from 'database/data-source';
 import User from '@models/user.model';
-import { badRequest, unauthorized } from '@utils/errors';
 import config from '@config';
+import AppError from '@utils/errors';
 
 const attachGoogleClient: RequestHandler = async (request, response, next) => {
   if (!request.user?.id) {
-    return next(unauthorized('Not authenticated'));
+    return next(AppError.unauthorized('Not authenticated'));
   }
 
   const repo = AppDataSource.getRepository(User);
   const user = await repo.findOne({ where: { id: request.user.id } });
   if (!user || !user.refreshToken) {
-    return next(badRequest('No Google credentials stored'));
+    return next(AppError.badRequest('No Google credentials stored'));
   }
 
   const client = new OAuth2Client(

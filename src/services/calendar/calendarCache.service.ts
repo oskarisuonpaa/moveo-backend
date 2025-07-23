@@ -1,6 +1,6 @@
+import AppError from '@utils/errors';
 import { AppDataSource } from '../../database/data-source';
 import Calendar from '@models/calendar.model';
-import { notFound } from '@utils/errors';
 
 let calendarIdByAlias: Record<string, string> | null = null;
 
@@ -28,7 +28,7 @@ export const calendarAliasToId = async (alias: string): Promise<string> => {
   const aliasMap = await getCalendarAliasMap();
   const calendarId = aliasMap[alias];
   if (!calendarId) {
-    notFound(`Calendar with alias ${alias} not found`);
+    throw AppError.notFound(`Calendar with alias ${alias} not found`);
   }
   return calendarId;
 };

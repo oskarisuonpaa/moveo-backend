@@ -1,98 +1,105 @@
-/**
- * A utility logger object that provides various logging methods with different severity levels.
- * Each method logs messages with a timestamp and a specific color for better visibility in the console.
- */
-const logger = {
-  /**
-   * Logs a trace-level message.
-   * Typically used for very detailed debugging information.
-   *
-   * @param {...unknown[]} args - The message or data to log.
-   */
-  trace: (...args: unknown[]) => {
-    const msg = [
-      '[TRACE]\t',
-      `[${new Date().toLocaleString()}]\t`,
-      ...args,
-    ].join(' ');
-    console.debug(`\x1b[35m${msg}\x1b[0m`);
-  },
+import util from 'util';
 
-  /**
-   * Logs a debug-level message.
-   * Useful for general debugging purposes.
-   *
-   * @param {...unknown[]} args - The message or data to log.
-   */
-  debug: (...args: unknown[]) => {
-    const msg = [
-      '[DEBUG]\t',
-      `[${new Date().toLocaleString()}]\t`,
-      ...args,
-    ].join(' ');
-    console.debug(`\x1b[36m${msg}\x1b[0m`);
-  },
+export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
-  /**
-   * Logs an info-level message.
-   * Used for informational messages that highlight the progress of the application.
-   *
-   * @param {...unknown[]} args - The message or data to log.
-   */
-  info: (...args: unknown[]) => {
-    const msg = [
-      '[INFO]\t ',
-      `[${new Date().toLocaleString()}]\t`,
-      ...args,
-    ].join(' ');
-    console.info(`\x1b[32m${msg}\x1b[0m`);
-  },
+export interface LoggerOptions {
+  level?: LogLevel;
+  prefix?: string;
+  useColors?: boolean;
+  timestamps?: boolean;
+}
 
-  /**
-   * Logs a warning-level message.
-   * Indicates a potential issue or something to be cautious about.
-   *
-   * @param {...unknown[]} args - The message or data to log.
-   */
-  warn: (...args: unknown[]) => {
-    const msg = [
-      '[WARN]\t ',
-      `[${new Date().toLocaleString()}]\t`,
-      ...args,
-    ].join(' ');
-    console.warn(`\x1b[33m${msg}\x1b[0m`);
-  },
-
-  /**
-   * Logs an error-level message.
-   * Used for errors that occur during the execution of the application.
-   *
-   * @param {...unknown[]} args - The message or data to log.
-   */
-  error: (...args: unknown[]) => {
-    const msg = [
-      '[ERROR]\t',
-      `[${new Date().toLocaleString()}]\t`,
-      ...args,
-    ].join(' ');
-    console.error(`\x1b[31m${msg}\x1b[0m`);
-  },
-
-  /**
-   * Logs a fatal-level message and exits the process.
-   * Used for critical errors that require the application to terminate.
-   *
-   * @param {...unknown[]} args - The message or data to log.
-   */
-  fatal: (...args: unknown[]) => {
-    const msg = [
-      '[FATAL]\t',
-      `[${new Date().toLocaleString()}]\t`,
-      ...args,
-    ].join(' ');
-    console.error(`\x1b[5;91m${msg}\x1b[0m`);
-    process.exit(1);
-  },
+const LEVEL_PRIORITIES: Record<LogLevel, number> = {
+  trace: 0,
+  debug: 1,
+  info: 2,
+  warn: 3,
+  error: 4,
+  fatal: 5,
 };
 
-export default logger;
+const ANSI_COLORS: Record<LogLevel, string> = {
+  trace: '\x1b[35m',
+  debug: '\x1b[36m',
+  info: '\x1b[32m',
+  warn: '\x1b[33m',
+  error: '\x1b[31m',
+  fatal: '\x1b[5;91m',
+};
+
+export class Logger {
+  private level: LogLevel;
+  private prefix: string;
+  private useColors: boolean;
+  private timestamps: boolean;
+
+  constructor(opts: LoggerOptions = {}) {
+    this.level = opts.level ?? 'debug';
+    this.prefix = opts.prefix ? `[${opts.prefix}] ` : '';
+    this.useColors = opts.useColors ?? true;
+    this.timestamps = opts.timestamps ?? true;
+  }
+
+  private shouldLog(l: LogLevel) {
+    return LEVEL_PRIORITIES[l] >= LEVEL_PRIORITIES[this.level];
+  }
+
+  private format(level: LogLevel, args: unknown[]) {
+    const timeStr = this.timestamps ? `[${new Date().toISOString()}]\t` : '';
+    const prefix = `${this.prefix}${level.toUpperCase()}: `;
+    const msg = util.formatWithOptions({ depth: null }, ...args);
+
+    let out = `${timeStr}${prefix}${msg}`;
+    if (this.useColors) {
+      const color = ANSI_COLORS[level] || '';
+      out = `${color}${out}\x1b[0m`;
+    }
+    return out;
+  }
+
+  private log(level: LogLevel, ...args: unknown[]) {
+    if (!this.shouldLog(level)) return;
+    const out = this.format(level, args);
+    if (level === 'error' || level === 'fatal') {
+      console.error(out);
+    } else if (level === 'warn') {
+      console.warn(out);
+    } else {
+      console.log(out);
+    }
+  }
+
+  trace(...args: unknown[]) {
+    this.log('trace', ...args);
+  }
+  debug(...args: unknown[]) {
+    this.log('debug', ...args);
+  }
+  info(...args: unknown[]) {
+    this.log('info', ...args);
+  }
+  warn(...args: unknown[]) {
+    this.log('warn', ...args);
+  }
+  error(...args: unknown[]) {
+    this.log('error', ...args);
+  }
+  fatal(...args: unknown[]) {
+    this.log('fatal', ...args);
+  }
+
+  setLevel(level: LogLevel) {
+    this.level = level;
+  }
+  setPrefix(prefix: string) {
+    this.prefix = `[${prefix}] `;
+  }
+  enableColors(flag = true) {
+    this.useColors = flag;
+  }
+  enableTimestamps(flag = true) {
+    this.timestamps = flag;
+  }
+}
+
+export default new Logger();

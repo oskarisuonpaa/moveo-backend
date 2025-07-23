@@ -1,14 +1,14 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../config';
-import { unauthorized } from '@utils/errors';
+import AppError from '@utils/errors';
 
 const authenticateJWT: RequestHandler = (request, _response, next) => {
   const token =
     (request.cookies as { token?: string }).token ||
     request.headers.authorization?.split(' ')[1];
   if (!token) {
-    return next(unauthorized('Authentication token is missing'));
+    return next(AppError.unauthorized('Authentication token is missing'));
   }
 
   try {
@@ -28,9 +28,9 @@ const authenticateJWT: RequestHandler = (request, _response, next) => {
       };
       return next();
     }
-    return next(unauthorized('Invalid token payload'));
+    return next(AppError.unauthorized('Invalid token payload'));
   } catch {
-    return next(unauthorized('Invalid or expired token'));
+    return next(AppError.unauthorized('Invalid or expired token'));
   }
 };
 
