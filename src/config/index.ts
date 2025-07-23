@@ -14,6 +14,9 @@ interface Config {
   };
   jwtSecret: string;
   frontendRedirectUri: string;
+  frontEndUri: string;
+  moveoEmail: string;
+  moveoEmailPassword: string;
 }
 
 const config: Config = {
@@ -33,6 +36,9 @@ const config: Config = {
   jwtSecret: process.env.JWT_SECRET || 'verysecretkey',
   frontendRedirectUri:
     process.env.FRONTEND_REDIRECT_URI || 'http://localhost:5173',
+  frontEndUri: process.env.FRONTEND_URI || 'http://localhost:5173',
+  moveoEmail: process.env.MOVEO_EMAIL || '',
+  moveoEmailPassword: process.env.MOVEO_EMAIL_PASSWORD || '',
 };
 
 export default config;

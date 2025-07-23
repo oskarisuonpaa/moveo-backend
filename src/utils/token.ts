@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
+import config from '@config';
 
-const SECRET = process.env.JWT_SECRET || 'very-secret-key';
+const SECRET = config.jwtSecret;
 
 /**
  * Generates a JWT token for email verification

@@ -22,9 +22,9 @@ import { getProductByCode } from '../services/shop/products.service';
 import AppError from '../utils/errors';
 import { asyncHandler } from '@utils/asyncHandler';
 import { successResponse } from '@utils/responses';
+import config from '@config';
 
-// TODO: replace with frontend url
-const verificationUrl = 'http://localhost:5173';
+const verificationUrl = config.frontEndUri;
 
 interface ShopEmailLinkBody {
   userId: string;
