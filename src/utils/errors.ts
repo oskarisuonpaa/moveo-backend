@@ -1,6 +1,4 @@
-import { AppError as MiddlewareError } from '../middleware/error.middleware';
-
-export class AppError extends Error implements MiddlewareError {
+export class AppError extends Error {
   status?: number;
   constructor(message: string, status = 500) {
     super(message);
