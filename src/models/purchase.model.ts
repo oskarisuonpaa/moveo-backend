@@ -13,21 +13,21 @@ export default class Purchase {
   @Column({ type: 'varchar', length: 255 })
   product_code!: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  purchase_date!: Date;
-
   @Column({ type: 'varchar', length: 255 })
   first_name!: string;
-
-  @Column({ type: 'date' })
-  product_start_date!: Date;
-
-  @Column({ type: 'date' })
-  product_end_date!: Date;
 
   @Column({ type: 'varchar', length: 255 })
   last_name!: string;
 
   @Column({ type: 'varchar', length: 255 })
   study_location!: string;
+
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  purchase_date!: Date;
+
+  @Column({ type: 'date' })
+  product_start_date!: Date;
+
+  @Column({ type: 'date' })
+  product_end_date!: Date;
 }
