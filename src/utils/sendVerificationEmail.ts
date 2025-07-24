@@ -1,6 +1,12 @@
 import nodemailer from 'nodemailer';
 import config from '@config';
 
+/**
+ * Sends a verification email to the user.
+ * @param email - The email address of the user.
+ * @param token - The verification token.
+ * @param url - The base URL for the verification link.
+ */
 export async function sendVerificationEmail(
   email: string,
   token: string,

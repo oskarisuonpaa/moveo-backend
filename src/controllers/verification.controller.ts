@@ -18,6 +18,7 @@ import {
   linkShopEmailToUser,
   updateUserInfoFromPurchase,
 } from '../services/users/users.service';
+import { addPurchaseUserId } from '@services/shop/purchases.service';
 import { getLatestPurchaseByEmail } from '../services/shop/purchases.service';
 import { getProductByCode } from '../services/shop/products.service';
 import AppError from '../utils/errors';
@@ -42,6 +43,10 @@ interface ShopEmailLinkBody {
 
 // registering verification, maybe not needed with Google Oauth
 // unless we want to enable logging in without Google after first time
+/**
+ * Registers a user and sends a verification email.
+ * @param req - The request object containing user email.
+ */
 export const registerVerification: RequestHandler = asyncHandler(
   async (req, res) => {
     const email = req.query.email as string;
@@ -66,7 +71,11 @@ export const registerVerification: RequestHandler = asyncHandler(
   },
 );
 
-// user wants to link shop email to their account, send verification email
+/**
+ * Adds a pending shop email for a user and sends a verification email.
+ * @param req - The request object containing user ID and shop email.
+ * @param res - The response object.
+ */
 export const shopEmailToUserLink: RequestHandler<
   object,
   unknown,
@@ -102,7 +111,7 @@ export const shopEmailToUserLink: RequestHandler<
     throw AppError.conflict('Shop email is already being linked to a user.');
   }
   await addPendingShopEmail(user.user_id, shopEmail, token);
-  await updateUserVerificationToken(user.app_email, token);
+  await updateUserVerificationToken(user.user_id, token);
   await sendVerificationEmail(
     shopEmail,
     token,
@@ -111,7 +120,11 @@ export const shopEmailToUserLink: RequestHandler<
   successResponse(res, 'Verification email sent to shop email.');
 });
 
-// user has verified their shop email, link it to their account
+/**
+ * Verifies the pending shop email and links it to the user account.
+ * @param req - The request object containing the verification token.
+ * @param res - The response object.
+ */
 export const shopEmailToUserVerification: RequestHandler = asyncHandler(
   async (req, res) => {
     const token = req.query.token as string;
@@ -150,8 +163,9 @@ export const shopEmailToUserVerification: RequestHandler = asyncHandler(
       product_name: product.product_name,
     });
 
+    await addPurchaseUserId(latestPurchase.purchase_id, user.user_id);
     await linkShopEmailToUser(user.user_id, pendingEmail);
-    await updateUserVerificationToken(user.app_email, null);
+    await updateUserVerificationToken(user.user_id, null);
     await removePendingShopEmail(user.user_id);
 
     successResponse(res, 'Shop email verified and linked.');

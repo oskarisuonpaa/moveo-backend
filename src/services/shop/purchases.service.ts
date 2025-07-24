@@ -14,8 +14,12 @@ const productDates = [
   { season: 'syksy', start: '1/9', end: '31/12' },
 ];
 
-// service for purchases table
-// get all purchases based on email
+/**
+ * Get all purchases based on shop email
+ * @param shopEmail 
+ * @returns all purchases made using the specified email
+ * @module purchases.service
+ */
 export const getPurchasesByEmail = (shopEmail: string) => {
   return PurchaseRepo.find({
     where: {
@@ -24,7 +28,26 @@ export const getPurchasesByEmail = (shopEmail: string) => {
   });
 };
 
-// gets the latest purchase based on email
+/**
+ * Get all purchases based on user ID
+ * @param userId 
+ * @returns all purchases made by the specified user
+ * @module purchases.service
+ */
+export const getPurchasesByUserId = (userId: string) => {
+  return PurchaseRepo.find({
+    where: {
+      userProfileId: userId,
+    },
+  });
+};
+
+/**
+ * Get the latest purchase based on shop email
+ * @param shopEmail 
+ * @returns the latest purchase made using the specified email
+ * @module purchases.service
+ */
 export const getLatestPurchaseByEmail = (shopEmail: string) => {
   return PurchaseRepo.findOne({
     where: {
@@ -36,7 +59,12 @@ export const getLatestPurchaseByEmail = (shopEmail: string) => {
   });
 };
 
-// adds a new purchase
+/**
+ * Adds a new purchase to the database.
+ * @param purchaseData - The purchase data to add.
+ * @returns The added purchase.
+ * @module purchases.service
+ */
 export const addPurchase = async (purchaseData: {
   shopEmail: string;
   productCode: string;
@@ -63,16 +91,17 @@ export const addPurchase = async (purchaseData: {
   const endDate = new Date();
   startDate.setDate(parseInt(seasonDates.start.split('/')[0]));
   startDate.setMonth(parseInt(seasonDates.start.split('/')[1]) - 1);
-  // need to compare dateNow to endDate since someone could buy membership mid-season
-  startDate.setFullYear(
-    dateNow < endDate ? dateNow.getFullYear() : dateNow.getFullYear() + 1,
-  );
-
   endDate.setDate(parseInt(seasonDates.end.split('/')[0]));
   endDate.setMonth(parseInt(seasonDates.end.split('/')[1]) - 1);
-  endDate.setFullYear(
-    dateNow < endDate ? dateNow.getFullYear() : dateNow.getFullYear() + 1,
-  );
+  // need to compare dateNow to endDate since someone could buy membership mid-season
+  startDate.setFullYear(dateNow.getFullYear());
+endDate.setFullYear(dateNow.getFullYear());
+
+// If today is after the end date, move both to next year
+if (dateNow > endDate) {
+  startDate.setFullYear(dateNow.getFullYear() + 1);
+  endDate.setFullYear(dateNow.getFullYear() + 1);
+}
 
   // create and save new purchase
   const purchase = PurchaseRepo.create({
@@ -88,7 +117,12 @@ export const addPurchase = async (purchaseData: {
   return PurchaseRepo.save(purchase);
 };
 
-// gets a purchase by its ID
+/**
+ * Get a purchase by its ID
+ * @param purchaseId - The ID of the purchase to retrieve
+ * @returns The purchase with the specified ID, or null if not found
+ * @module purchases.service
+ */
 export const getPurchaseById = (
   purchaseId: number,
 ): Promise<Purchase | null> => {
@@ -97,14 +131,23 @@ export const getPurchaseById = (
   });
 };
 
-// gets all purchases for a specific product code
+/**
+ * Get purchases by product code
+ * @param productCode - The code of the product to filter purchases by
+ * @returns All purchases made for the specified product code
+ * @module purchases.service
+ */
 export const getPurchasesByProductCode = (productCode: string) => {
   return PurchaseRepo.find({
     where: { product_code: productCode },
   });
 };
 
-// deletes a purchase by its ID, probably not needed if we want to keep a record of all purchases
+/**
+ * Deletes a purchase by its ID
+ * @param purchaseId - The ID of the purchase to delete
+ * @returns The result of the delete operation
+ */
 export const deletePurchase = (purchaseId: number): Promise<DeleteResult> => {
   return PurchaseRepo.delete({ purchase_id: purchaseId });
 };
@@ -117,6 +160,7 @@ export const updatePurchase = (
   purchaseDate: string,
   productEndDate: string,
   productStartDate: string,
+  userId?: string,
 ): Promise<UpdateResult> => {
   return PurchaseRepo.update(
     { purchase_id: purchaseId },
@@ -126,12 +170,33 @@ export const updatePurchase = (
       purchase_date: purchaseDate,
       product_end_date: productEndDate,
       product_start_date: productStartDate,
+      userProfileId: userId,
     },
   );
 };
 
-// gets a list of all purchases
-// this could be used for admin purposes to see all purchases made
+/**
+ * Adds a user ID to a purchase
+ * @param purchaseId - The ID of the purchase to update
+ * @param userId - The ID of the user to associate with the purchase
+ * @returns The result of the update operation
+ * @module purchases.service
+ */
+export const addPurchaseUserId = async (
+  purchaseId: number,
+  userId: string,
+): Promise<UpdateResult> => {
+  return PurchaseRepo.update(
+    { purchase_id: purchaseId },
+    { userProfileId: userId },
+  );
+};
+
+/**
+ * Get all purchases
+ * @returns All purchases in the database
+ * @module purchases.service
+ */
 export const getAllPurchases = (): Promise<Purchase[]> => {
   return PurchaseRepo.find({
     order: {
@@ -140,8 +205,13 @@ export const getAllPurchases = (): Promise<Purchase[]> => {
   });
 };
 
-// gets purchases made within a specific date range
-// this could be used for reporting purposes
+/**
+ * Get purchases by date range
+ * @param startDate - The start date of the range
+ * @param endDate - The end date of the range
+ * @returns All purchases made within the specified date range
+ * @module purchases.service
+ */
 export const getPurchasesByDateRange = (
   startDate: Date,
   endDate: Date,
