@@ -1,5 +1,10 @@
 import Router from 'express';
-import { getUser, getUserList, addUser, getCurrentUser } from '../controllers/users.controller';
+import {
+  getUser,
+  getUserList,
+  addUser,
+  getCurrentUser,
+} from '../controllers/users.controller';
 const router = Router();
 
 // TODO: non-admin should not have access to /
