@@ -91,7 +91,7 @@ export const shopEmailToUserLink: RequestHandler<
 
   // Send verification email to shop email
   const token = generateEmailVerificationToken(shopEmail);
-  const emailExists = await checkUserEmails(shopEmail);
+  const emailExists = await checkUserEmails(shopEmail, user.user_id);
   if (emailExists) {
     throw AppError.conflict('Shop email is already linked to a user.');
   }

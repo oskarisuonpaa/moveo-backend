@@ -132,13 +132,13 @@ export const getUserByVerificationToken = (
 };
 
 // for checking whether a given email is already linked to an existing user
-export const checkUserEmails = async (email: string): Promise<UserProfile | null> => {
-  if (!email) {
-    throw AppError.badRequest('Email is required to check user emails.');
+export const checkUserEmails = async (email: string, userId: string): Promise<UserProfile | null> => {
+  if (!email || !userId) {
+    throw AppError.badRequest('Email and User ID are required to check user emails.');
   }
   // Check if user exists by email
   const emailFound = await UserProfileRepo.findOne({ where: [{ app_email: email }, { shop_email: email }] });
-  if (emailFound) {
+  if (emailFound && emailFound.user_id !== userId) {
     throw AppError.conflict('Email is already linked to a user.');
   }
   return null;
