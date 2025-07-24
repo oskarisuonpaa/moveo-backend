@@ -4,7 +4,7 @@ import fs from 'fs';
 // Get the Excel file path from cmd line arguments
 const excelFilepath = process.argv[2];
 if (!excelFilepath) {
-    console.error('Usage: readExcelProducts.js [excel filepath]');
+    console.error('Usage: node readExcelProducts.js [excel filepath]');
     process.exit(1);
 }
 

@@ -3,6 +3,7 @@ import {
   getUserByEmail,
   createUser,
   updateUserVerificationToken,
+  checkUserEmails,
 } from '../services/users/users.service';
 import { sendVerificationEmail } from '../utils/sendVerificationEmail';
 import { generateEmailVerificationToken } from '../utils/token';
@@ -12,7 +13,7 @@ import {
   removePendingShopEmail,
 } from '../services/shop/pendingShopEmails.service';
 import {
-  getUserById,
+  getUserByUserId,
   getUserByVerificationToken,
   linkShopEmailToUser,
   updateUserInfoFromPurchase,
@@ -23,11 +24,13 @@ import AppError from '../utils/errors';
 import { asyncHandler } from '@utils/asyncHandler';
 import { successResponse } from '@utils/responses';
 import config from '@config';
+import { AppDataSource } from 'database/data-source';
+import PendingShopEmail from '@models/pendingShopEmail.model';
 
 const verificationUrl = config.frontEndUri;
+const PendingShopEmailRepo = AppDataSource.getRepository(PendingShopEmail);
 
 interface ShopEmailLinkBody {
-  userId: string;
   shopEmail: string;
 }
 
@@ -69,9 +72,13 @@ export const shopEmailToUserLink: RequestHandler<
   unknown,
   ShopEmailLinkBody
 > = asyncHandler(async (req, res) => {
-  const { userId, shopEmail } = req.body;
+  if (!req.user) {
+    throw AppError.unauthorized('User not authenticated.');
+  }
+  const userId = req.user.id;
+  const { shopEmail } = req.body;
 
-  const user = await getUserById(userId);
+  const user = await getUserByUserId(userId);
   if (!user) {
     throw AppError.notFound('User not found.');
   }
@@ -84,7 +91,17 @@ export const shopEmailToUserLink: RequestHandler<
 
   // Send verification email to shop email
   const token = generateEmailVerificationToken(shopEmail);
-  await addPendingShopEmail(userId, shopEmail, token);
+  const emailExists = await checkUserEmails(shopEmail, user.user_id);
+  if (emailExists) {
+    throw AppError.conflict('Shop email is already linked to a user.');
+  }
+  const pendingEmail = await PendingShopEmailRepo.findOne({
+    where: { shop_email: shopEmail },
+  });
+  if (pendingEmail) {
+    throw AppError.conflict('Shop email is already being linked to a user.');
+  }
+  await addPendingShopEmail(user.user_id, shopEmail, token);
   await updateUserVerificationToken(user.app_email, token);
   await sendVerificationEmail(
     shopEmail,
