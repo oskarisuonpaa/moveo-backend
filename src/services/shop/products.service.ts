@@ -6,13 +6,20 @@ const productRepository = AppDataSource.getRepository(Product);
 
 // service for products table
 
-// get all products
+/**
+ * Gets all products from the database.
+ * @returns An array of all products.
+ * @module products.service
+ */
 export const getProducts = () => {
   return productRepository.find();
 };
 
-// get product by product code
-// product code (should be) unique, so it returns only one product
+/**
+ * Gets a product by its code.
+ * @param productCode - The product code to search for.
+ * @returns The product associated with the product code, or null if not found.
+ */
 export const getProductByCode = (productCode: string) => {
   return productRepository.findOne({
     where: {
@@ -21,7 +28,15 @@ export const getProductByCode = (productCode: string) => {
   });
 };
 
-// adds a new product to the database
+/**
+ * Adds a new product to the database.
+ * @param productName - The name of the product.
+ * @param productCode - The code of the product.
+ * @param productSeason - The season of the product.
+ * @param productNameEnglish - The English name of the product (optional).
+ * @returns The created product.
+ * @module products.service
+ */
 export const addProduct = (
   productName: string,
   productCode: string,
@@ -37,7 +52,16 @@ export const addProduct = (
   return productRepository.save(product);
 };
 
-// updates an existing product in the database
+/**
+ * Updates an existing product in the database.
+ * @param productId - The ID of the product to update.
+ * @param productName - The new name of the product.
+ * @param productCode - The new code of the product.
+ * @param productSeason - The new season of the product.
+ * @param productNameEnglish - The new English name of the product (optional).
+ * @returns The updated product.
+ * @module products.service
+ */
 export const updateProduct = async (
   productId: number,
   productName: string,
@@ -60,12 +84,22 @@ export const updateProduct = async (
   return productRepository.update(productId, product);
 };
 
-// deletes a product from the database by product ID
+/**
+ * Deletes a product from the database.
+ * @param productId - The ID of the product to delete.
+ * @returns The result of the delete operation.
+ * @module products.service
+ */
 export const deleteProduct = async (productId: number) => {
   return productRepository.delete({ product_id: productId });
 };
 
-// get all products by season
+/**
+ * Gets all products for a specific season.
+ * @param season - The season to filter products by.
+ * @returns An array of products that match the specified season.
+ * @module products.service
+ */
 export const getProductsBySeason = (season: string) => {
   return productRepository.find({
     where: {
@@ -74,7 +108,12 @@ export const getProductsBySeason = (season: string) => {
   });
 };
 
-// get a product's season
+/**
+ * Gets the season of a product by its code.
+ * @param productCode - The code of the product to find.
+ * @returns The season of the product, or null if not found.
+ * @module products.service
+ */
 export const getProductSeason = (productCode: string) => {
   return productRepository.findOne({
     where: {

@@ -1,3 +1,8 @@
+/**
+ * Formats a date as YYYY-MM-DD.
+ * @param date - The date to format.
+ * @returns The formatted date string.
+ */
 export default function formatDate(date: Date): string {
   const year = date.getFullYear();
   // getMonth() returns 0-based month, so add 1 and pad with zero
