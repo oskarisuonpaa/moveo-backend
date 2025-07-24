@@ -1,5 +1,12 @@
 import 'reflect-metadata';
-import { Entity, Column, PrimaryGeneratedColumn, Index, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  Index,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import UserProfile from './userProfile.model';
 
 @Entity({ name: 'purchases' })
@@ -17,8 +24,8 @@ export default class Purchase {
 
   @OneToOne(() => UserProfile)
   @JoinColumn({ name: 'userProfileId', referencedColumnName: 'user_id' })
- userProfile?: UserProfile;
- 
+  userProfile?: UserProfile;
+
   @Column({ type: 'varchar', length: 255 })
   product_code!: string;
 

@@ -16,7 +16,7 @@ const productDates = [
 
 /**
  * Get all purchases based on shop email
- * @param shopEmail 
+ * @param shopEmail
  * @returns all purchases made using the specified email
  * @module purchases.service
  */
@@ -30,7 +30,7 @@ export const getPurchasesByEmail = (shopEmail: string) => {
 
 /**
  * Get all purchases based on user ID
- * @param userId 
+ * @param userId
  * @returns all purchases made by the specified user
  * @module purchases.service
  */
@@ -44,7 +44,7 @@ export const getPurchasesByUserId = (userId: string) => {
 
 /**
  * Get the latest purchase based on shop email
- * @param shopEmail 
+ * @param shopEmail
  * @returns the latest purchase made using the specified email
  * @module purchases.service
  */
@@ -95,13 +95,13 @@ export const addPurchase = async (purchaseData: {
   endDate.setMonth(parseInt(seasonDates.end.split('/')[1]) - 1);
   // need to compare dateNow to endDate since someone could buy membership mid-season
   startDate.setFullYear(dateNow.getFullYear());
-endDate.setFullYear(dateNow.getFullYear());
+  endDate.setFullYear(dateNow.getFullYear());
 
-// If today is after the end date, move both to next year
-if (dateNow > endDate) {
-  startDate.setFullYear(dateNow.getFullYear() + 1);
-  endDate.setFullYear(dateNow.getFullYear() + 1);
-}
+  // If today is after the end date, move both to next year
+  if (dateNow > endDate) {
+    startDate.setFullYear(dateNow.getFullYear() + 1);
+    endDate.setFullYear(dateNow.getFullYear() + 1);
+  }
 
   // create and save new purchase
   const purchase = PurchaseRepo.create({
