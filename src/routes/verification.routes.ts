@@ -27,6 +27,6 @@ router.get('/verify', (req, res) => {
 router.post('/link-shop-email', shopEmailToUserLink);
 
 // Endpoint to verify shop email and link it to the user
-router.post('/verify-shop-email', shopEmailToUserVerification);
+router.get('/verify-shop-email', shopEmailToUserVerification);
 
 export default router;
