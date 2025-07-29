@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import config from '@config';
+import AppError from '@utils/errors';
 
 /**
  * Sends a verification email to the user.
@@ -25,10 +26,18 @@ export async function sendVerificationEmail(
 
   const verificationUrl = `${url}?token=${token}`;
 
-  await transporter.sendMail({
-    from: '"MoveoApp" <' + config.moveoEmail + '>',
-    to: email,
-    subject: 'Verify your email',
-    html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>`,
-  });
+  try {
+    await transporter.sendMail({
+      from: '"MoveoApp" <' + config.moveoEmail + '>',
+      to: email,
+      subject: 'Verify your email',
+      html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>`,
+    });
+  } catch (error) {
+    console.error('Error sending verification email:', error);
+    throw AppError.internal(
+      'Failed to send verification email. Please try again later.',
+      error,
+    );
+  }
 }

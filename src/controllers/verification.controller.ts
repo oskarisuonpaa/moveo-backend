@@ -115,11 +115,12 @@ export const shopEmailToUserLink: RequestHandler<
   await sendVerificationEmail(
     shopEmail,
     token,
-    `${verificationUrl}/verify-shop-email`,
+    `${verificationUrl}/verify-email`,
   );
   successResponse(res, 'Verification email sent to shop email.');
 });
 
+// Note: if the login flow changes/there is no stored token/cookie, probably need to change the email verification to only require verification token and no auth middleware
 /**
  * Verifies the pending shop email and links it to the user account.
  * @param req - The request object containing the verification token.

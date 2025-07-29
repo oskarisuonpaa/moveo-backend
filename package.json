@@ -53,7 +53,7 @@
     "tslib": "^2.8.1",
     "typeorm": "^0.3.25",
     "wordpress-hash-node": "^1.0.0",
-    "xlsx": "^0.18.5",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zod": "^3.25.71"
   }
 }
