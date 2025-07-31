@@ -40,9 +40,12 @@ const config: Config = {
   frontEndUri: process.env.FRONTEND_URI || 'http://localhost:5173',
   moveoEmail: process.env.MOVEO_EMAIL || '',
   moveoEmailPassword: process.env.MOVEO_EMAIL_PASSWORD || '',
-  allowedEmailDomains: (process.env.ALLOWED_EMAIL_DOMAINS || 'student.lab.fi,student.lut.fi,lab.fi,lut.fi')
+  allowedEmailDomains: (
+    process.env.ALLOWED_EMAIL_DOMAINS ||
+    'student.lab.fi,student.lut.fi,lab.fi,lut.fi'
+  )
     .split(',')
-    .map(domain => domain.trim())
+    .map((domain) => domain.trim())
     .filter(Boolean),
 };
 

@@ -6,7 +6,6 @@ import {
   Index,
   OneToOne,
   JoinColumn,
-  Unique,
 } from 'typeorm';
 import UserProfile from './userProfile.model';
 

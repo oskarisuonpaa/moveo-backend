@@ -36,7 +36,9 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
 
     // check the email domain
     const allowedDomains = config.allowedEmailDomains || [];
-    if (!allowedDomains.some(domain => googleUser.email!.endsWith(`@${domain}`))) {
+    if (
+      !allowedDomains.some((domain) => googleUser.email!.endsWith(`@${domain}`))
+    ) {
       throw AppError.forbidden(
         'You must sign in with your LAB or LUT credentials.',
       );
@@ -88,8 +90,8 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
     // Generate a JWT token for the user
     const token = jwt.sign(
       {
-        userId: user.id as string,
-        email: user.email as string,
+        userId: user.id,
+        email: user.email,
       },
       config.jwtSecret,
       { expiresIn: '1h' },
