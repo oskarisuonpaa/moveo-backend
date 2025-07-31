@@ -6,6 +6,7 @@ import {
   Index,
   OneToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import UserProfile from './userProfile.model';
 
@@ -25,8 +26,11 @@ export default class User {
   @JoinColumn({ name: 'userProfileId', referencedColumnName: 'user_id' })
   userProfile?: UserProfile;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   googleId!: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  name!: string | null;
 
   @Column({ type: 'varchar', length: 512, nullable: true })
   accessToken!: string | null;
