@@ -34,6 +34,13 @@ export const handleGoogleCallback: RequestHandler = asyncHandler(
     // Exchange the authorization code for user information
     const googleUser = await googleOAuthService.getUser(code);
 
+    // check the email domain
+    const allowedDomains = config.allowedEmailDomains || [];
+    if (!allowedDomains.some(domain => googleUser.email!.endsWith(`@${domain}`))) {
+      throw AppError.forbidden(
+        'You must sign in with your LAB or LUT credentials.',
+      );
+    }
 
     // Check if the user already exists in the database
     const repository = AppDataSource.getRepository(User);

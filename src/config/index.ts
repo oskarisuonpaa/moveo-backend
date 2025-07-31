@@ -17,6 +17,7 @@ interface Config {
   frontEndUri: string;
   moveoEmail: string;
   moveoEmailPassword: string;
+  allowedEmailDomains: string[];
 }
 
 const config: Config = {
@@ -39,6 +40,10 @@ const config: Config = {
   frontEndUri: process.env.FRONTEND_URI || 'http://localhost:5173',
   moveoEmail: process.env.MOVEO_EMAIL || '',
   moveoEmailPassword: process.env.MOVEO_EMAIL_PASSWORD || '',
+  allowedEmailDomains: (process.env.ALLOWED_EMAIL_DOMAINS || 'student.lab.fi,student.lut.fi,lab.fi,lut.fi')
+    .split(',')
+    .map(domain => domain.trim())
+    .filter(Boolean),
 };
 
 export default config;
