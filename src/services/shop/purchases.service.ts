@@ -88,6 +88,13 @@ export const addPurchase = async (purchaseData: {
   studyLocation: string;
   purchaseNumber: string;
 }): Promise<Purchase> => {
+  // check that purchase number is unique
+  const existingPurchase = await getPurchaseByPurchaseNumber(
+    purchaseData.purchaseNumber,
+  );
+  if (existingPurchase) {
+    throw AppError.conflict('Purchase number already exists');
+  }
   // Need to convert product season into membership start and end dates
   const productSeason = await getProductSeason(purchaseData.productCode);
   if (!productSeason) {
