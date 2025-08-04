@@ -15,7 +15,7 @@ export default class Purchase {
   purchase_id!: number;
 
   @Index()
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, unique: true })
   purchase_number!: string;
 
   @Index()
