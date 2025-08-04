@@ -16,6 +16,10 @@ export default class Purchase {
 
   @Index()
   @Column({ type: 'varchar', length: 255 })
+  purchase_number!: string;
+
+  @Index()
+  @Column({ type: 'varchar', length: 255 })
   shop_email!: string;
 
   @Index()

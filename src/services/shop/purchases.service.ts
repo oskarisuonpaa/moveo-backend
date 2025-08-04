@@ -9,7 +9,7 @@ const PurchaseRepo = AppDataSource.getRepository(Purchase);
 
 // Convert product seasons to dates
 const productDates = [
-  { season: 'kevät', start: '1/1', end: '31/5' },
+  { season: 'kevät', start: '1/1', end: '31/8' },
   { season: 'kesä', start: '1/6', end: '31/8' },
   { season: 'syksy', start: '1/9', end: '31/12' },
 ];
@@ -60,6 +60,20 @@ export const getLatestPurchaseByEmail = (shopEmail: string) => {
 };
 
 /**
+ * Get a purchase by its purchase number
+ * @param purchaseNumber - The purchase number of the purchase to retrieve
+ * @returns The purchase with the specified purchase number, or null if not found
+ * @module purchases.service
+ */
+export const getPurchaseByPurchaseNumber = (
+  purchaseNumber: string,
+): Promise<Purchase | null> => {
+  return PurchaseRepo.findOne({
+    where: { purchase_number: purchaseNumber },
+  });
+};
+
+/**
  * Adds a new purchase to the database.
  * @param purchaseData - The purchase data to add.
  * @returns The added purchase.
@@ -72,6 +86,7 @@ export const addPurchase = async (purchaseData: {
   lastName: string;
   purchaseDate?: Date;
   studyLocation: string;
+  purchaseNumber: string;
 }): Promise<Purchase> => {
   // Need to convert product season into membership start and end dates
   const productSeason = await getProductSeason(purchaseData.productCode);
@@ -110,6 +125,7 @@ export const addPurchase = async (purchaseData: {
     first_name: purchaseData.firstName,
     last_name: purchaseData.lastName,
     study_location: purchaseData.studyLocation,
+    purchase_number: purchaseData.purchaseNumber,
     purchase_date: purchaseData.purchaseDate || new Date(),
     product_end_date: new Date(formatDate(endDate)),
     product_start_date: new Date(formatDate(startDate)),

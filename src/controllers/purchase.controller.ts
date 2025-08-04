@@ -15,6 +15,7 @@ interface PurchaseData {
   firstName: string;
   lastName: string;
   studyLocation: string;
+  purchaseNumber: string;
   purchaseDate: Date;
 }
 /**
