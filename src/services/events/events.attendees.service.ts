@@ -6,6 +6,15 @@ import {
 } from './events.service';
 import { calendarAliasToId } from '@services/calendar/calendarCache.service';
 
+/**
+ * Adds an attendee to a calendar event.
+ * This function checks if the event is full before adding the attendee.
+ * @param alias - The alias of the calendar where the event exists.
+ * @param eventId - The ID of the event to which the attendee will be added.
+ * @param email - The email of the attendee to be added.
+ * @throws {AppError} If the event is full.
+ * @module events.attendees.service
+ */
 export const addAttendeeToEvent = async (
   alias: string,
   eventId: string,
@@ -36,6 +45,14 @@ export const addAttendeeToEvent = async (
   invalidateCalendarEventsCache(alias);
 };
 
+/**
+ * Removes an attendee from a calendar event.
+ * This function updates the event's attendees list and invalidates the cache.
+ * @param alias - The alias of the calendar where the event exists.
+ * @param eventId - The ID of the event from which the attendee will be removed.
+ * @param email - The email of the attendee to be removed.
+ * @module events.attendees.service
+ */
 export async function removeAttendeeFromEvent(
   alias: string,
   eventId: string,

@@ -2,6 +2,10 @@ import config from '@config';
 import AppError from '@utils/errors';
 import { OAuth2Client } from 'google-auth-library';
 
+/**
+ * Google OAuth Service
+ * This service handles Google OAuth authentication and user information retrieval.
+ */
 class GoogleOAuthService {
   private client: OAuth2Client;
 
@@ -17,6 +21,10 @@ class GoogleOAuthService {
     );
   }
 
+  /**
+   * Generates the Google OAuth authorization URL.
+   * This URL is used to redirect users for authentication.
+   */
   generateAuthUrl(): string {
     return this.client.generateAuthUrl({
       access_type: 'offline',
@@ -25,6 +33,13 @@ class GoogleOAuthService {
     });
   }
 
+  /**
+   * Exchanges the authorization code for user information.
+   * This method retrieves the user's Google ID, email, display name, and profile picture.
+   * @param code - The authorization code received from Google.
+   * @return An object containing user information and tokens.
+   * @module googleOAuth.service
+   */
   async getUser(code: string) {
     const { tokens } = await this.client.getToken(code);
     this.client.setCredentials(tokens);
@@ -46,6 +61,10 @@ class GoogleOAuthService {
     };
   }
 
+  /**
+   * Refreshes the access token using the refresh token.
+   * This method is used to obtain a new access token when the current one expires.
+   */
   async refreshTokens() {
     if (!this.client.credentials.refresh_token) {
       throw AppError.badRequest('No refresh token available');
