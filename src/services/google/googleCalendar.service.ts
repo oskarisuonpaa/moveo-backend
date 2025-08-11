@@ -1,5 +1,6 @@
 import { calendar_v3 } from 'googleapis';
 import { serviceCalendar } from './googleServiceClient';
+import AppError from '@utils/errors';
 
 export const listCalendarEvents = async (
   calendarId: string,
@@ -73,8 +74,12 @@ export const removeCalendarEvent = async (
 export const getCalendarList = async (): Promise<
   calendar_v3.Schema$CalendarListEntry[]
 > => {
+  try {
   const { data: calendarList } = await serviceCalendar.calendarList.list();
   return calendarList.items ?? [];
+} catch (error) { // adding more descriptive error logging
+  throw AppError.internal('Failed to fetch calendar list', error);
+}
 };
 
 export const getCalendar = async (
