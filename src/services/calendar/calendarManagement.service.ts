@@ -5,6 +5,12 @@ import { invalidateCalendarSummariesCache } from './calendar.service';
 import { invalidateCalendarAliasCache } from './calendarCache.service';
 import * as googleCalendar from '@services/google/googleCalendar.service';
 
+/**
+ * Creates a new calendar and synchronizes it with the database.
+ * @param alias - The alias for the new calendar.
+ * @returns The created calendar object.
+ * @module calendarManagement.service
+ */
 export const createAndSyncCalendar = async (alias: string) => {
   const calendarData = {
     summary: alias,
@@ -25,6 +31,13 @@ export const createAndSyncCalendar = async (alias: string) => {
   return calendar;
 };
 
+/**
+ * Removes a calendar by its alias.
+ * This function deletes the calendar from Google and removes it from the database.
+ * @param alias - The alias of the calendar to be removed.
+ * @throws {AppError} If the calendar is not found.
+ * @module calendarManagement.service
+ */
 export const removeCalendar = async (alias: string) => {
   const repository = AppDataSource.getRepository(Calendar);
   const calendar = await repository.findOne({ where: { alias } });
