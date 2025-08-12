@@ -34,6 +34,9 @@ export default class Purchase {
   product_code!: string;
 
   @Column({ type: 'varchar', length: 255 })
+  product_name!: string;
+
+  @Column({ type: 'varchar', length: 255 })
   first_name!: string;
 
   @Column({ type: 'varchar', length: 255 })
