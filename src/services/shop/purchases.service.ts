@@ -1,7 +1,7 @@
 import { AppDataSource } from 'database/data-source';
 import Purchase from '@models/purchase.model';
 import { DeleteResult, UpdateResult, Between } from 'typeorm';
-import { getProductSeason } from './products.service';
+import { getProductByCode, getProductSeason } from './products.service';
 import formatDate from '@utils/formatDate';
 import AppError from '@utils/errors';
 
@@ -95,13 +95,15 @@ export const addPurchase = async (purchaseData: {
   if (existingPurchase) {
     throw AppError.conflict('Purchase number already exists');
   }
-  // Need to convert product season into membership start and end dates
-  const productSeason = await getProductSeason(purchaseData.productCode);
-  if (!productSeason) {
+  // get product information
+  const product = await getProductByCode(purchaseData.productCode);
+
+  if (!product) {
     throw AppError.notFound('Product not found');
   }
+  // Need to convert product season into membership start and end dates
   const seasonDates = productDates.find(
-    (season) => season.season === productSeason.product_season,
+    (season) => season.season === product.product_season,
   );
   if (!seasonDates) {
     throw AppError.notFound('Product season not found');
@@ -129,6 +131,7 @@ export const addPurchase = async (purchaseData: {
   const purchase = PurchaseRepo.create({
     shop_email: purchaseData.shopEmail,
     product_code: purchaseData.productCode,
+    product_name: product.product_name,
     first_name: purchaseData.firstName,
     last_name: purchaseData.lastName,
     study_location: purchaseData.studyLocation,
@@ -213,6 +216,23 @@ export const addPurchaseUserId = async (
     { purchase_id: purchaseId },
     { userProfileId: userId },
   );
+};
+
+/**
+ * Get all purchases by user ID
+ * @param userId - The ID of the user to retrieve purchases for
+ * @returns All purchases made by the specified user
+ * @module purchases.service
+ */
+export const getAllPurchasesByUserId = (
+  userId: string,
+): Promise<Purchase[]> => {
+  return PurchaseRepo.find({
+    where: { userProfileId: userId },
+    order: {
+      purchase_date: 'DESC',
+    },
+  });
 };
 
 /**
