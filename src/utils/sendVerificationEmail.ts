@@ -26,12 +26,25 @@ export async function sendVerificationEmail(
 
   const verificationUrl = `${url}?token=${token}`;
 
+  // probably not worth setting up i18n for just the email
+  const lang = 'en'; // TODO: change once saving user settings server-side is implemented
+
+  const subjects = {
+    en: 'Verify your email',
+    fi: 'Vahvista sähköpostisi',
+  };
+
+  const bodies = {
+    en: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>`,
+    fi: `<p>Klikkaa <a href="${verificationUrl}">tästä</a> vahvistaaksesi sähköpostisi.</p>`,
+  };
+
   try {
     await transporter.sendMail({
       from: '"MoveoApp" <' + config.moveoEmail + '>',
       to: email,
-      subject: 'Verify your email',
-      html: `<p>Click <a href="${verificationUrl}">here</a> to verify your email.</p>`,
+      subject: subjects[lang],
+      html: bodies[lang],
     });
   } catch (error) {
     console.error('Error sending verification email:', error);

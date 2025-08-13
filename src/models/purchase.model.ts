@@ -15,6 +15,10 @@ export default class Purchase {
   purchase_id!: number;
 
   @Index()
+  @Column({ type: 'varchar', length: 255, unique: true })
+  purchase_number!: string;
+
+  @Index()
   @Column({ type: 'varchar', length: 255 })
   shop_email!: string;
 
@@ -28,6 +32,9 @@ export default class Purchase {
 
   @Column({ type: 'varchar', length: 255 })
   product_code!: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  product_name!: string;
 
   @Column({ type: 'varchar', length: 255 })
   first_name!: string;

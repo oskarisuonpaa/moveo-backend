@@ -4,10 +4,12 @@ import {
   getAllPurchases,
   getLatestPurchaseByEmail,
   getPurchasesByEmail,
+  getPurchasesByUserId,
 } from '../services/shop/purchases.service';
 import AppError from '@utils/errors';
 import { asyncHandler } from '../utils/asyncHandler';
 import { successResponse } from '../utils/responses';
+import { getUserByUserId } from '../services/users/users.service';
 
 interface PurchaseData {
   productCode: string;
@@ -15,6 +17,7 @@ interface PurchaseData {
   firstName: string;
   lastName: string;
   studyLocation: string;
+  purchaseNumber: string;
   purchaseDate: Date;
 }
 /**
@@ -73,5 +76,29 @@ export const getLatestPurchaseByEmailController: RequestHandler = asyncHandler(
       throw AppError.notFound('No purchases found for this email.');
     }
     successResponse(res, latestPurchase);
+  },
+);
+
+/**
+ * Gets all purchases by user ID.
+ * @param req - The request object containing the user ID in the URL parameters.
+ * @returns All purchases associated with the provided user ID.
+ */
+export const getAllPurchasesByUserIdController: RequestHandler = asyncHandler(
+  async (req, res) => {
+    if (!req.user) {
+      throw AppError.unauthorized('User not authenticated.');
+    }
+    const userId = req.user.id;
+    const user = await getUserByUserId(userId);
+    if (!user) {
+      throw AppError.notFound('User not found.');
+    }
+
+    const purchases = await getPurchasesByUserId(user.user_id);
+    if (!purchases || purchases.length === 0) {
+      throw AppError.notFound('No purchases found for this user.');
+    }
+    successResponse(res, purchases);
   },
 );

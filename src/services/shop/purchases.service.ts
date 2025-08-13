@@ -1,7 +1,7 @@
 import { AppDataSource } from 'database/data-source';
 import Purchase from '@models/purchase.model';
 import { DeleteResult, UpdateResult, Between } from 'typeorm';
-import { getProductSeason } from './products.service';
+import { getProductByCode } from './products.service';
 import formatDate from '@utils/formatDate';
 import AppError from '@utils/errors';
 
@@ -9,7 +9,7 @@ const PurchaseRepo = AppDataSource.getRepository(Purchase);
 
 // Convert product seasons to dates
 const productDates = [
-  { season: 'kevät', start: '1/1', end: '31/5' },
+  { season: 'kevät', start: '1/1', end: '31/8' },
   { season: 'kesä', start: '1/6', end: '31/8' },
   { season: 'syksy', start: '1/9', end: '31/12' },
 ];
@@ -60,6 +60,20 @@ export const getLatestPurchaseByEmail = (shopEmail: string) => {
 };
 
 /**
+ * Get a purchase by its purchase number
+ * @param purchaseNumber - The purchase number of the purchase to retrieve
+ * @returns The purchase with the specified purchase number, or null if not found
+ * @module purchases.service
+ */
+export const getPurchaseByPurchaseNumber = (
+  purchaseNumber: string,
+): Promise<Purchase | null> => {
+  return PurchaseRepo.findOne({
+    where: { purchase_number: purchaseNumber },
+  });
+};
+
+/**
  * Adds a new purchase to the database.
  * @param purchaseData - The purchase data to add.
  * @returns The added purchase.
@@ -73,14 +87,24 @@ export const addPurchase = async (purchaseData: {
   purchaseDate?: Date;
   studyLocation: string;
   orderNumber: string;
+
 }): Promise<Purchase> => {
-  // Need to convert product season into membership start and end dates
-  const productSeason = await getProductSeason(purchaseData.productCode);
-  if (!productSeason) {
+  // check that purchase number is unique
+  const existingPurchase = await getPurchaseByPurchaseNumber(
+    purchaseData.purchaseNumber,
+  );
+  if (existingPurchase) {
+    throw AppError.conflict('Purchase number already exists');
+  }
+  // get product information
+  const product = await getProductByCode(purchaseData.productCode);
+
+  if (!product) {
     throw AppError.notFound('Product not found');
   }
+  // Need to convert product season into membership start and end dates
   const seasonDates = productDates.find(
-    (season) => season.season === productSeason.product_season,
+    (season) => season.season === product.product_season,
   );
   if (!seasonDates) {
     throw AppError.notFound('Product season not found');
@@ -108,9 +132,11 @@ export const addPurchase = async (purchaseData: {
   const purchase = PurchaseRepo.create({
     shop_email: purchaseData.shopEmail,
     product_code: purchaseData.productCode,
+    product_name: product.product_name,
     first_name: purchaseData.firstName,
     last_name: purchaseData.lastName,
     study_location: purchaseData.studyLocation,
+    purchase_number: purchaseData.purchaseNumber,
     purchase_date: purchaseData.purchaseDate || new Date(),
     product_end_date: new Date(formatDate(endDate)),
     product_start_date: new Date(formatDate(startDate)),
@@ -191,6 +217,23 @@ export const addPurchaseUserId = async (
     { purchase_id: purchaseId },
     { userProfileId: userId },
   );
+};
+
+/**
+ * Get all purchases by user ID
+ * @param userId - The ID of the user to retrieve purchases for
+ * @returns All purchases made by the specified user
+ * @module purchases.service
+ */
+export const getAllPurchasesByUserId = (
+  userId: string,
+): Promise<Purchase[]> => {
+  return PurchaseRepo.find({
+    where: { userProfileId: userId },
+    order: {
+      purchase_date: 'DESC',
+    },
+  });
 };
 
 /**
