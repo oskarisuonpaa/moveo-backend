@@ -18,6 +18,12 @@ interface Config {
   moveoEmail: string;
   moveoEmailPassword: string;
   allowedEmailDomains: string[];
+  imap: {
+    host: string;
+    port: number;
+    email: string;
+    password: string;
+  };
 }
 
 const config: Config = {
@@ -33,6 +39,12 @@ const config: Config = {
     redirectUri:
       process.env.GOOGLE_REDIRECT_URI ||
       'http://localhost:3000/auth/google/callback',
+  },
+  imap: {
+    host: process.env.IMAP_HOST || 'imap.gmail.com',
+    port: Number(process.env.IMAP_PORT) || 993,
+    email: process.env.IMAP_USER || '',
+    password: process.env.IMAP_PASS || '',
   },
   jwtSecret: process.env.JWT_SECRET || 'verysecretkey',
   frontendRedirectUri:

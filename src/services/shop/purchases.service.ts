@@ -72,6 +72,7 @@ export const addPurchase = async (purchaseData: {
   lastName: string;
   purchaseDate?: Date;
   studyLocation: string;
+  orderNumber: string;
 }): Promise<Purchase> => {
   // Need to convert product season into membership start and end dates
   const productSeason = await getProductSeason(purchaseData.productCode);
