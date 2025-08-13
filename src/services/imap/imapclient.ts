@@ -61,7 +61,7 @@ export async function connectToImap(): Promise<void> {
 
           if (data) {
             await addPurchase(data);
-            logger.info(`Purchase saved: ${data.orderNumber}`);
+            logger.info(`Purchase saved: ${data.purchaseNumber}`);
           } else {
             logger.warn('Could not extract order data.');
           }
