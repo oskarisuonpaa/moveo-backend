@@ -86,7 +86,8 @@ export const addPurchase = async (purchaseData: {
   lastName: string;
   purchaseDate?: Date;
   studyLocation: string;
-  purchaseNumber: string;
+  orderNumber: string;
+
 }): Promise<Purchase> => {
   // check that purchase number is unique
   const existingPurchase = await getPurchaseByPurchaseNumber(
