@@ -5,7 +5,7 @@ export function extractOrderData(text: string) {
   const lastName = text.match(/Sukunimi:\s*(.+)/i)?.[1]?.trim();
   const shopEmail = text.match(/Sähköposti:\s*(\S+)/)?.[1];
   const productCode = text.match(/SKU:\s*(.+)/i)?.[1]?.trim();
-  const orderNumber = text.match(/Tilausnumero:\s*(\S+)/)?.[1];
+  const purchaseNumber = text.match(/Tilausnumero:\s*(\S+)/)?.[1];
   const purchaseDateRaw = text.match(
     /(?:Ostopäivä:\s*(\d{1,2}\.\d{1,2}\.\d{4}))/i,
   )?.[1];
@@ -20,7 +20,7 @@ export function extractOrderData(text: string) {
     lastName &&
     shopEmail &&
     productCode &&
-    orderNumber &&
+    purchaseNumber &&
     purchaseDate &&
     studyLocation
   ) {
@@ -29,7 +29,7 @@ export function extractOrderData(text: string) {
       lastName,
       shopEmail,
       productCode,
-      orderNumber,
+      purchaseNumber,
       purchaseDate,
       studyLocation,
     };
