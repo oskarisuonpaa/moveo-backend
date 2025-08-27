@@ -45,7 +45,6 @@ app.use('/api/events', eventsRouter);
 app.use('/api/events', attendeesRouter);
 app.use('/api/users', userRouter);
 app.use('/api/purchases', purchaseRouter);
-// if login flow changes so there is no token stored in cookies when logging in, may need to move verification to be outside authenticated routes and verify only with verfication token
 app.use('/verification', verificationRouter);
 
 //Temp
