@@ -9,7 +9,4 @@ export default class UserSettings {
   @Index()
   @Column({ type: 'varchar', length: 255 })
   user_id!: string;
-
-  @Column({ type: 'json' })
-  settings!: Record<string, any>;
 }
