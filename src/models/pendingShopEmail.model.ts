@@ -18,12 +18,12 @@ export default class PendingShopEmail {
   @Column({ type: 'varchar', length: 255 })
   shop_email!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  userProfileId!: string | null;
+  @Column({ type: 'varchar', length: 255 })
+  userProfileId!: string;
 
   @OneToOne(() => UserProfile)
   @JoinColumn({ name: 'userProfileId', referencedColumnName: 'user_id' })
-  userProfile?: UserProfile;
+  userProfile!: UserProfile;
 
   @Column({ type: 'varchar', length: 255 })
   verification_token!: string;

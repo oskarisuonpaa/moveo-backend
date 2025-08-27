@@ -1,8 +1,6 @@
 import Router from 'express';
-import { getNotifications } from '../controllers/notifications.controller';
 
 const router = Router();
-router.get('/', getNotifications);
 
 router.post('/', (req, res) => {
   res.status(201).json({ message: 'Notification created' });
