@@ -33,8 +33,9 @@ export const initializeDataSource = async () => {
     logger.info('Google Calendars synchronized to the database successfully.');
     await seedProducts();
     logger.info('Products seeded successfully.');
+    // TODO: remove the mock data used for purchases, use/acquire real data
     await seedPurchase();
-    logger.info('Purchase seeded successfully.');
+    logger.info('Mock purchases seeded successfully.');
   } catch (error) {
     throw AppError.internal('Error during Data Source initialization:', error);
   }

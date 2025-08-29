@@ -1,6 +1,6 @@
 import { AppDataSource } from './data-source';
 import Product from '../models/product.model';
-import mockProducts from '../mocks/products.json';
+import products from './products.json';
 import { mockPurchase } from 'mocks/mockPurchase';
 import Purchase from '../models/purchase.model';
 
@@ -9,7 +9,7 @@ export async function seedProducts() {
   const productRepo = AppDataSource.getRepository(Product);
   const count = await productRepo.count();
   if (count === 0) {
-    await productRepo.save(mockProducts);
+    await productRepo.save(products);
     console.log('Mock products inserted!');
   }
 }
