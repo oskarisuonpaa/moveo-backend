@@ -175,6 +175,7 @@ export const shopEmailToUserVerification: RequestHandler = asyncHandler(
       membership_start: latestPurchase.product_start_date,
       membership_end: latestPurchase.product_end_date,
       product_name: product.product_name,
+      product_season: product.product_season,
     });
 
     // Link also past purchases with the same email to the user

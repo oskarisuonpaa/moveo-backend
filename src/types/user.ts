@@ -7,6 +7,7 @@ export interface User {
   role?: string;
   product_name?: string;
   product_code?: string;
+  product_season?: string;
   study_location?: string;
   membership_start?: string;
   membership_end?: string;

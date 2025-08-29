@@ -165,6 +165,7 @@ export const updateUserInfoFromPurchase = (
     membership_start: Date | null;
     membership_end: Date;
     product_name: string;
+    product_season: string;
   },
 ): Promise<UpdateResult> => {
   return UserProfileRepo.update(
@@ -179,6 +180,7 @@ export const updateUserInfoFromPurchase = (
         : null,
       membership_end: new Date(purchaseData.membership_end),
       product_name: purchaseData.product_name,
+      product_season: purchaseData.product_season,
     },
   );
 };

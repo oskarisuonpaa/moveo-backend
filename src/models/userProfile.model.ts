@@ -36,6 +36,9 @@ export default class UserProfile {
   product_name!: string | null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
+  product_season!: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
   verification_token!: string | null;
 
   @Column({ type: 'boolean', default: false })
