@@ -19,7 +19,10 @@ import {
   updateUserInfoFromPurchase,
 } from '../services/users/users.service';
 import { addPurchaseUserId } from '@services/shop/purchases.service';
-import { getLatestPurchaseByEmail } from '../services/shop/purchases.service';
+import {
+  getLatestPurchaseByEmail,
+  getPurchasesByEmail,
+} from '../services/shop/purchases.service';
 import { getProductByCode } from '../services/shop/products.service';
 import AppError from '../utils/errors';
 import { asyncHandler } from '@utils/asyncHandler';
@@ -98,6 +101,17 @@ export const shopEmailToUserLink: RequestHandler<
     throw AppError.notFound('No purchases found for this shop email.');
   }
 
+  // check that the email is not already linked to a user
+  const purchases = await getPurchasesByEmail(shopEmail);
+  const conflictingPurchase = purchases.find(
+    (p) => p.userProfileId && p.userProfileId !== user.user_id,
+  );
+  if (conflictingPurchase) {
+    throw AppError.conflict(
+      'This shop email is already linked to another user.',
+    );
+  }
+
   // Send verification email to shop email
   const token = generateEmailVerificationToken(shopEmail);
   const emailExists = await checkUserEmails(shopEmail, user.user_id);
@@ -120,7 +134,6 @@ export const shopEmailToUserLink: RequestHandler<
   successResponse(res, 'Verification email sent to shop email.');
 });
 
-// Note: if the login flow changes/there is no stored token/cookie, probably need to change the email verification to only require verification token and no auth middleware
 /**
  * Verifies the pending shop email and links it to the user account.
  * @param req - The request object containing the verification token.
@@ -164,7 +177,11 @@ export const shopEmailToUserVerification: RequestHandler = asyncHandler(
       product_name: product.product_name,
     });
 
-    await addPurchaseUserId(latestPurchase.purchase_id, user.user_id);
+    // Link also past purchases with the same email to the user
+    const purchases = await getPurchasesByEmail(pendingEmail);
+    for (const purchase of purchases) {
+      await addPurchaseUserId(purchase.purchase_id, user.user_id);
+    }
     await linkShopEmailToUser(user.user_id, pendingEmail);
     await updateUserVerificationToken(user.user_id, null);
     await removePendingShopEmail(user.user_id);

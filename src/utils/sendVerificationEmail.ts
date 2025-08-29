@@ -16,7 +16,7 @@ export async function sendVerificationEmail(
   const transporter = nodemailer.createTransport({
     // configure email provider
     // TODO: replace with actual email provider configuration
-    host: 'sandbox.smtp.mailtrap.io',
+    host: config.moveoEmailHost,
     port: 2525,
     auth: {
       user: config.moveoEmail,

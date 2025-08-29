@@ -17,6 +17,7 @@ interface Config {
   frontEndUri: string;
   moveoEmail: string;
   moveoEmailPassword: string;
+  moveoEmailHost: string;
   allowedEmailDomains: string[];
   imap: {
     host: string;
@@ -52,6 +53,7 @@ const config: Config = {
   frontEndUri: process.env.FRONTEND_URI || 'http://localhost:5173',
   moveoEmail: process.env.MOVEO_EMAIL || '',
   moveoEmailPassword: process.env.MOVEO_EMAIL_PASSWORD || '',
+  moveoEmailHost: process.env.MOVEO_EMAIL_HOST || 'smtp.example.com',
   allowedEmailDomains: (
     process.env.ALLOWED_EMAIL_DOMAINS ||
     'student.lab.fi,student.lut.fi,lab.fi,lut.fi'

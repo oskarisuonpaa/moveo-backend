@@ -10,7 +10,7 @@ import AppError from '@utils/errors';
 logger.setLevel('debug');
 logger.setPrefix('IMAP');
 
-// schedule to run every 15 minutes between 6 AM and 10 PM
+// schedule to run every 15 minutes between 6 AM and 10 PM (server's time)
 cron.schedule('*/15 6-22 * * *', async () => {
   logger.info('Scheduled IMAP check started...');
   try {
