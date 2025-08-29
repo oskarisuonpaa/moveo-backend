@@ -1,12 +1,12 @@
-import config from '@config';
-import googleOAuthService from '@services/google/googleOAuth.service';
-import { asyncHandler } from '@utils/asyncHandler';
-import AppError from '@utils/errors';
+import config from '../config';
+import googleOAuthService from '../services/google/googleOAuth.service';
+import { asyncHandler } from '../utils/asyncHandler';
+import AppError from '../utils/errors';
 import { AppDataSource } from 'database/data-source';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
-import UserProfile from '@models/userProfile.model';
-import User from '@models/user.model';
+import UserProfile from '../models/userProfile.model';
+import User from '../models/user.model';
 
 /**
  * Redirects the user to the Google OAuth consent screen.

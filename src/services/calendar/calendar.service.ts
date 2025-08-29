@@ -1,4 +1,4 @@
-import AppError from '@utils/errors';
+import AppError from '../../utils/errors';
 import { getCalendarAliasMap } from './calendarCache.service';
 
 let cachedSummaries: string[] | null = null;

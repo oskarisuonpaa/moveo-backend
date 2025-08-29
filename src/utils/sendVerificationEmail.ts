@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
-import config from '@config';
-import AppError from '@utils/errors';
+import config from '../config';
+import AppError from '../utils/errors';
 
 /**
  * Sends a verification email to the user.

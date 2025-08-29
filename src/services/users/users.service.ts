@@ -1,8 +1,8 @@
 import { AppDataSource } from 'database/data-source';
-import UserProfile from '@models/userProfile.model';
+import UserProfile from '../../models/userProfile.model';
 import { UpdateResult } from 'typeorm';
-import AppError from '@utils/errors';
-import User from '@models/user.model';
+import AppError from '../../utils/errors';
+import User from '../../models/user.model';
 
 const UserProfileRepo = AppDataSource.getRepository(UserProfile);
 const UserRepo = AppDataSource.getRepository(User);

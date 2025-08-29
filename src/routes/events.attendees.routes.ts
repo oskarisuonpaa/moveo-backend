@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
   attendEvent,
   unattendEvent,
-} from '@controllers/events.attendees.controller';
+} from '../controllers/events.attendees.controller';
 
 const router = Router();
 

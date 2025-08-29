@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import { AppDataSource } from 'database/data-source';
-import User from '@models/user.model';
-import config from '@config';
-import AppError from '@utils/errors';
+import User from '../models/user.model';
+import config from '../config';
+import AppError from '../utils/errors';
 
 const attachGoogleClient: RequestHandler = async (request, response, next) => {
   if (!request.user?.id) {

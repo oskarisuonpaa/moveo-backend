@@ -1,6 +1,6 @@
 import { calendar_v3 } from 'googleapis';
 import { serviceCalendar } from './googleServiceClient';
-import AppError from '@utils/errors';
+import AppError from '../../utils/errors';
 
 /**
  * Fetches a list of calendar events for a given calendar ID.

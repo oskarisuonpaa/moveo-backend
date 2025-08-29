@@ -18,15 +18,15 @@ import {
   linkShopEmailToUser,
   updateUserInfoFromPurchase,
 } from '../services/users/users.service';
-import { addPurchaseUserId } from '@services/shop/purchases.service';
+import { addPurchaseUserId } from '../services/shop/purchases.service';
 import { getLatestPurchaseByEmail } from '../services/shop/purchases.service';
 import { getProductByCode } from '../services/shop/products.service';
 import AppError from '../utils/errors';
-import { asyncHandler } from '@utils/asyncHandler';
-import { successResponse } from '@utils/responses';
-import config from '@config';
+import { asyncHandler } from '../utils/asyncHandler';
+import { successResponse } from '../utils/responses';
+import config from '../config';
 import { AppDataSource } from 'database/data-source';
-import PendingShopEmail from '@models/pendingShopEmail.model';
+import PendingShopEmail from '../models/pendingShopEmail.model';
 
 const verificationUrl = config.frontEndUri;
 const PendingShopEmailRepo = AppDataSource.getRepository(PendingShopEmail);

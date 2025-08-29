@@ -1,5 +1,5 @@
-import config from '@config';
-import AppError from '@utils/errors';
+import config from '../../config';
+import AppError from '../../utils/errors';
 import { OAuth2Client } from 'google-auth-library';
 
 /**

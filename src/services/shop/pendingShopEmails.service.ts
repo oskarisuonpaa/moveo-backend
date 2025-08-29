@@ -1,6 +1,6 @@
 import { AppDataSource } from 'database/data-source';
-import PendingShopEmail from '@models/pendingShopEmail.model';
-import AppError from '@utils/errors';
+import PendingShopEmail from '../../models/pendingShopEmail.model';
+import AppError from '../../utils/errors';
 
 const pendingShopEmailRepo = AppDataSource.getRepository(PendingShopEmail);
 

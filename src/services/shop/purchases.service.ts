@@ -1,9 +1,9 @@
 import { AppDataSource } from 'database/data-source';
-import Purchase from '@models/purchase.model';
+import Purchase from '../../models/purchase.model';
 import { DeleteResult, UpdateResult, Between } from 'typeorm';
 import { getProductByCode } from './products.service';
-import formatDate from '@utils/formatDate';
-import AppError from '@utils/errors';
+import formatDate from '../../utils/formatDate';
+import AppError from '../../utils/errors';
 
 const PurchaseRepo = AppDataSource.getRepository(Purchase);
 

@@ -1,6 +1,6 @@
 import { calendar_v3 } from 'googleapis';
 import * as googleCalendar from '../google/googleCalendar.service';
-import { calendarAliasToId } from '@services/calendar/calendarCache.service';
+import { calendarAliasToId } from '../../services/calendar/calendarCache.service';
 import { invalidateCalendarEventsCache } from './events.service';
 
 /**

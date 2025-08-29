@@ -2,9 +2,9 @@
 
 console.log('Script started');
 
-import logger from '@utils/logger';
+import logger from '../../utils/logger';
 import { connectToImap } from './imapclient';
-import AppError from '@utils/errors';
+import AppError from '../../utils/errors';
 
 logger.setLevel('debug');
 logger.setPrefix('IMAP');

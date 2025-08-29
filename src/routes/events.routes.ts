@@ -4,8 +4,8 @@ import {
   getCalendarEvents,
   postCalendarEvent,
 } from '../controllers/events.controller';
-import validateCalendarAlias from '@middleware/validateCalendarAlias.middleware';
-import validateEventId from '@middleware/validateEventId.middleware';
+import validateCalendarAlias from '../middleware/validateCalendarAlias.middleware';
+import validateEventId from '../middleware/validateEventId.middleware';
 
 const router = Router();
 

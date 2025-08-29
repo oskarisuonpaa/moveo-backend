@@ -1,22 +1,29 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import Calendar from '@models/calendar.model';
-import config from '@config';
-import logger from '@utils/logger';
-import { syncGoogleCalendarsToDb } from '@services/calendar/calendarSync.service';
-import User from '@models/user.model';
-import UserProfile from '@models/userProfile.model';
-import Product from '@models/product.model';
-import PendingShopEmail from '@models/pendingShopEmail.model';
-import Purchase from '@models/purchase.model';
+import Calendar from '../models/calendar.model';
+import config from '../config';
+import logger from '../utils/logger';
+import { syncGoogleCalendarsToDb } from '../services/calendar/calendarSync.service';
+import User from '../models/user.model';
+import UserProfile from '../models/userProfile.model';
+import Product from '../models/product.model';
+import PendingShopEmail from '../models/pendingShopEmail.model';
+import Purchase from '../models/purchase.model';
 import { seedProducts } from './seedData';
-import AppError from '@utils/errors';
+import AppError from '../utils/errors';
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
   database: config.database,
-  entities: [Calendar, User, UserProfile, Product, PendingShopEmail, Purchase],
-  synchronize: true,
+  entities: [
+    Calendar,
+    User,
+    UserProfile,
+    Product,
+    PendingShopEmail,
+    Purchase,
+  ],
+  synchronize: true, // Change to migration?
   logging: false,
 });
 
@@ -28,11 +35,11 @@ export const initializeDataSource = async () => {
 
   try {
     await AppDataSource.initialize();
-    logger.info('Data Source has been initialized successfully.');
+    logger.info('Data Source initialized (SQLite)');
     await syncGoogleCalendarsToDb();
-    logger.info('Google Calendars synchronized to the database successfully.');
+    logger.info('Google Calendars synchronized');
     await seedProducts();
-    logger.info('Products seeded successfully.');
+    logger.info('Products seeded');
   } catch (error) {
     throw AppError.internal('Error during Data Source initialization:', error);
   }

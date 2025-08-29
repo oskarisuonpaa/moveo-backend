@@ -1,9 +1,9 @@
 import { AppDataSource } from '../../database/data-source';
-import Calendar from '@models/calendar.model';
-import AppError from '@utils/errors';
+import Calendar from '../../models/calendar.model';
+import AppError from '../../utils/errors';
 import { invalidateCalendarSummariesCache } from './calendar.service';
 import { invalidateCalendarAliasCache } from './calendarCache.service';
-import * as googleCalendar from '@services/google/googleCalendar.service';
+import * as googleCalendar from '../../services/google/googleCalendar.service';
 
 /**
  * Creates a new calendar and synchronizes it with the database.

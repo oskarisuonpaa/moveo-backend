@@ -3,9 +3,9 @@ import {
   deleteCalendar,
   getCalendars,
   postCalendar,
-} from '@controllers/calendar.controller';
-import requireRequestBody from '@middleware/validateRequestBody.middleware';
-import validateCalendarAlias from '@middleware/validateCalendarAlias.middleware';
+} from '../controllers/calendar.controller';
+import requireRequestBody from '../middleware/validateRequestBody.middleware';
+import validateCalendarAlias from '../middleware/validateCalendarAlias.middleware';
 
 const router = Router();
 

@@ -6,7 +6,7 @@ import {
   getPurchasesByEmail,
   getPurchasesByUserId,
 } from '../services/shop/purchases.service';
-import AppError from '@utils/errors';
+import AppError from '../utils/errors';
 import { asyncHandler } from '../utils/asyncHandler';
 import { successResponse } from '../utils/responses';
 import { getUserByUserId } from '../services/users/users.service';

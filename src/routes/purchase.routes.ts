@@ -6,7 +6,7 @@ import {
   getLatestPurchaseByEmailController,
   getPurchasesByEmailController,
   getAllPurchasesByUserIdController,
-} from '@controllers/purchase.controller';
+} from '../controllers/purchase.controller';
 const router = Router();
 
 router.get('/', getAllPurchasesController);

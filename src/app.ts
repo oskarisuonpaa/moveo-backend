@@ -1,21 +1,21 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import errorHandler from '@middleware/error.middleware';
-import authenticateJWT from '@middleware/authenticateJWT.middleware';
-import calendarRouter from '@routes/calendar.routes';
-import eventsRouter from '@routes/events.routes';
-import attendeesRouter from '@routes/events.attendees.routes';
-import authRouter from '@routes/auth.routes';
-import logger from '@utils/logger';
-import AppError from '@utils/errors';
-import config from '@config';
-import attachGoogleClient from '@middleware/attachGoogleClient.middleware';
-import verificationRouter from '@routes/verification.routes';
-import registerRouter from '@routes/register';
-import loginRouter from '@routes/login';
-import userRouter from '@routes/users.routes';
-import purchaseRouter from '@routes/purchase.routes';
+import errorHandler from './middleware/error.middleware';
+import authenticateJWT from './middleware/authenticateJWT.middleware';
+import calendarRouter from './routes/calendar.routes';
+import eventsRouter from './routes/events.routes';
+import attendeesRouter from './routes/events.attendees.routes';
+import authRouter from './routes/auth.routes';
+import logger from './utils/logger';
+import AppError from './utils/errors';
+import config from './config';
+import attachGoogleClient from './middleware/attachGoogleClient.middleware';
+import verificationRouter from './routes/verification.routes';
+import registerRouter from './routes/register';
+import loginRouter from './routes/login';
+import userRouter from './routes/users.routes';
+import purchaseRouter from './routes/purchase.routes';
 
 const app = express();
 

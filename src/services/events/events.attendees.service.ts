@@ -1,10 +1,10 @@
-import AppError from '@utils/errors';
-import { patchCalendarEvent } from '@services/google/googleCalendar.service';
+import AppError from '../../utils/errors';
+import { patchCalendarEvent } from '../../services/google/googleCalendar.service';
 import {
   getCalendarEventById,
   invalidateCalendarEventsCache,
 } from './events.service';
-import { calendarAliasToId } from '@services/calendar/calendarCache.service';
+import { calendarAliasToId } from '../../services/calendar/calendarCache.service';
 
 /**
  * Adds an attendee to a calendar event.

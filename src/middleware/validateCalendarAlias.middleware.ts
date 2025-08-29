@@ -1,4 +1,4 @@
-import AppError from '@utils/errors';
+import AppError from '../utils/errors';
 import { NextFunction, Request, Response } from 'express';
 
 const requireCalendarAlias = (

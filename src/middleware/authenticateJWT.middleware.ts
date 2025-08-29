@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../config';
-import AppError from '@utils/errors';
+import AppError from '../utils/errors';
 
 const authenticateJWT: RequestHandler = (request, _response, next) => {
   const token =

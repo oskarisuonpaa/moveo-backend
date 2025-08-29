@@ -1,8 +1,8 @@
 import http from 'http';
 import app from './app';
-import logger from '@utils/logger';
+import logger from './utils/logger';
 import { initializeDataSource } from './database/data-source';
-import config from '@config';
+import config from './config';
 
 const PORT = config.port;
 const server = http.createServer(app);

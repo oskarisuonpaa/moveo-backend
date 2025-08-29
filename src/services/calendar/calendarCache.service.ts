@@ -1,6 +1,6 @@
-import AppError from '@utils/errors';
+import AppError from '../../utils/errors';
 import { AppDataSource } from '../../database/data-source';
-import Calendar from '@models/calendar.model';
+import Calendar from '../../models/calendar.model';
 
 let calendarIdByAlias: Record<string, string> | null = null;
 

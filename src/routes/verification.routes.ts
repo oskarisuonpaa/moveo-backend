@@ -4,7 +4,7 @@ import {
   registerVerification,
   shopEmailToUserLink,
   shopEmailToUserVerification,
-} from '@controllers/verification.controller';
+} from '../controllers/verification.controller';
 
 const router = Router();
 

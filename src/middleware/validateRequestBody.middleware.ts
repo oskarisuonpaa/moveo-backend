@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RequestHandler } from 'express';
-import AppError from '@utils/errors';
+import AppError from '../utils/errors';
 
 const nonEmptyObject = z
   .record(z.unknown())

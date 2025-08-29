@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
     "target": "es2016",
     "module": "commonjs",
     "experimentalDecorators": true,
@@ -9,7 +11,7 @@
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "paths": {
       "@services/*": ["services/*"],
       "@utils/*": ["utils/*"],

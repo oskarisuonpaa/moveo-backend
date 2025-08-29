@@ -1,6 +1,6 @@
 import { AppDataSource } from 'database/data-source';
-import Product from '@models/product.model';
-import AppError from '@utils/errors';
+import Product from '../../models/product.model';
+import AppError from '../../utils/errors';
 
 const productRepository = AppDataSource.getRepository(Product);
 
