@@ -16,7 +16,7 @@ if (!excelFilepath) {
 // need to use absolute paths to avoid problems with relative paths
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const outputPath = path.resolve(__dirname, '../mocks/products.json');
+const outputPath = path.resolve(__dirname, '../database/products.json');
 
 // does the excel file exist?
 if (!fs.existsSync(excelFilepath)) {
